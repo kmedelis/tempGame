@@ -9,12 +9,16 @@ const context = canvas.getContext("2d");
 
 var grid = new Array(gridSize);
 
-function addResources() {
-    const playerImage = new Image();
-    playerImage.src = "images/playerDown.png";
-    playerImage.onload = () => {
-        context.drawImage(playerImage, 0, 0, rectangleSize, rectangleSize);
+function Player(i, j) {
+    this.i = i;
+    this.j = j;
+    this.show = function () {
+        context.fillStyle = "green";
+        context.fillRect(this.j * rectangleSize, this.i * rectangleSize, rectangleSize, rectangleSize);
     }
+    this.walk = function () {
+    }
+
 }
 
 function setup() {
@@ -35,12 +39,10 @@ function setup() {
           grid[i][j].addNeighbors(grid);
       }
     }
-
     start = grid[0][0];
 }
 
 setup();
-addResources();
 
 for (var i = 0; i < gridSize; i++) {
     for (var j = 0; j < gridSize; j++) {
@@ -49,22 +51,17 @@ for (var i = 0; i < gridSize; i++) {
     }
 }
 
-canvas.onclick = event => {
-    if (event.detail === 1) {
-      console.log("single click")
-    } else if (event.detail === 2) {
-      console.log("double click")
-    }
- };
+var player = new Player(5, 5);
+player.show()
+console.log(player);
 
 canvas.addEventListener("click", (event) => {
 
     resetInformationAboutPrevious();
 
-    for (var i = 0; i < path.length; i++) {
-        path[i].color="white";
-    }
+    resetDrawnGridPaths();
 
+    console.log(player.i, player.j)
     // get the x and y position of the click
     const x = event.clientX - canvas.offsetLeft;
     const y = event.clientY - canvas.offsetTop;
@@ -75,23 +72,34 @@ canvas.addEventListener("click", (event) => {
   
     // do something with the row and column
 
-    end = grid[row][col];
-    openSet.push(start);
-
-    while(!stop) {
-        pathFinding();
+    var isWall = checkIfWall(row, col);
+    if (isWall) {
+        return;
+    }
+    else {
+        go(row, col);
     }
 
     grid[row][col].color = "red";
 
-    path[path.length - 1].color="green";
+    // path[path.length - 1].color="green";
     for (var i = 0; i < path.length-1; i++) {
         path[i].color="blue";
     }
 
     redrawGrid();
+    player.show()
+
     reset(row, col);
 });
+
+function checkIfWall(row, col) {
+    if (grid[row][col].wall) {
+        console.log("can't go there")
+        return true;
+    }
+    return false
+}
 
 function reset(row, col) {
     start = grid[row][col];
@@ -100,6 +108,16 @@ function reset(row, col) {
     closedSet = [];
 }
 
+function go(row, col) {
+    player.i = row;
+    player.j = col;
+    end = grid[row][col];
+    openSet.push(start);
+
+    while(!stop) {
+        pathFinding();
+    }
+}
 function redrawGrid() {
     for (var i = 0; i < gridSize; i++) {
         for (var j = 0; j < gridSize; j++) {
@@ -113,5 +131,12 @@ function resetInformationAboutPrevious() {
         for (var j = 0; j < gridSize; j++) {
             grid[i][j].previous = undefined;
         }
+    }
+}
+
+function resetDrawnGridPaths()
+{
+    for (var i = 0; i < path.length; i++) {
+        path[i].color="white";
     }
 }
