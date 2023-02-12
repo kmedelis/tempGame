@@ -15,6 +15,7 @@ function pathFinding() {
       var current = openSet[winner];
  
       if (current === end) {
+        path.unshift(current);
         stop = true;
         return;
       }

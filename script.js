@@ -12,11 +12,28 @@ var grid = new Array(gridSize);
 function Player(i, j) {
     this.i = i;
     this.j = j;
+
     this.show = function () {
         context.fillStyle = "green";
         context.fillRect(this.j * rectangleSize, this.i * rectangleSize, rectangleSize, rectangleSize);
     }
+
     this.walk = function () {
+        for (var i = path.length - 1; i >= 0; i--) {
+        var self = this;
+        (function(i, player) {
+            setTimeout(function() {
+                var next = path.pop();
+                grid[self.i][self.j].color = "white";
+                grid[self.i][self.j].show();
+                player.i = next.i;
+                player.j = next.j;
+                player.show();
+                }, (path.length - i) * 200);
+        })(i, this);
+
+        }
+        console.log(player)
     }
 
 }
@@ -43,7 +60,7 @@ function setup() {
 }
 
 setup();
-
+console.log(grid[0][0])
 for (var i = 0; i < gridSize; i++) {
     for (var j = 0; j < gridSize; j++) {
         grid[i][j].show();
@@ -51,7 +68,7 @@ for (var i = 0; i < gridSize; i++) {
     }
 }
 
-var player = new Player(5, 5);
+var player = new Player(0, 0);
 player.show()
 console.log(player);
 
@@ -88,10 +105,12 @@ canvas.addEventListener("click", (event) => {
     }
 
     redrawGrid();
-    player.show()
+    console.log(player.i)
+    player.walk();
 
     reset(row, col);
 });
+
 
 function checkIfWall(row, col) {
     if (grid[row][col].wall) {
@@ -109,8 +128,6 @@ function reset(row, col) {
 }
 
 function go(row, col) {
-    player.i = row;
-    player.j = col;
     end = grid[row][col];
     openSet.push(start);
 
