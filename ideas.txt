@@ -1,0 +1,5 @@
+1. castle
+2. monsters
+3. fighting
+4. camera tracking
+5. minimap

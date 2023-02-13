@@ -4,12 +4,11 @@ map.setup();
 for (var i = 0; i < gridSize; i++) {
     for (var j = 0; j < gridSize; j++) {
         grid[i][j].show();
-        grid[i][j].previous = undefined;
     }
 }
 
-start = grid[0][0];
 var player = new Player(0, 0);
+start = grid[player.i][player.j];
 player.render();
 
 canvas.addEventListener("click", (event) => {

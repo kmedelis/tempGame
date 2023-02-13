@@ -1,8 +1,10 @@
 BUGS
+1. fix pathing. when going one direction and another point is clicked, then everything messes up.
+
 
 IMPORTANT FIX
 
 MEDIUM IMPORTANCE
-1. maybe fix rendering, by adding them so some list and then loop through the list in one go. Right now there are different functions
 
 LOW IMPORTANCE
+1. maybe improve rendering, by adding them so some list and then loop through the list in one go. Right now there are different functions

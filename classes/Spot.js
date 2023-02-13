@@ -11,18 +11,12 @@ function Spot(i, j) {
 
     if (Math.random() < 0.2) {
       this.type = "wall";
-      this.color = baseWallColor;
     }
 
     if (Math.random() < 0.1) {
-        console.log(this.type)
-        if (this.type !== "wall")
+        if (this.type != "wall")
         {
             this.type = "gold"; 
-            this.color = "yellow";
-        }
-        else {
-            console.log("can't place gold here")
         }
     }
   

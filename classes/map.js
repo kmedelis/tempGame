@@ -9,7 +9,7 @@ function map() {
     this.initializeGrid = function() {
         for (var i = 0; i < gridSize; i++) {
             for (var j = 0; j < gridSize; j++) {
-                grid[i][j] = new Spot(i, j);
+                grid[i][j] = new Spot(i, j);     
             }
         }
     }
@@ -23,15 +23,29 @@ function map() {
     }
 
     this.renderTrees = function() {
-        image = new Image();
-        image.src = "images/tree.png";
-        image.onload = function() {
+        treeImage = new Image();
+        treeImage.src = "images/tree.png";
+        treeImage.onload = function() {
             for (var i = 0; i < gridSize; i++) {
                 for (var j = 0; j < gridSize; j++) {
                     if(grid[i][j].type === "wall")
                     {
-                        console.log("tree")
-                        context.drawImage(image, j * rectangleSize, i * rectangleSize, rectangleSize, rectangleSize);
+                        context.drawImage(treeImage, j * rectangleSize, i * rectangleSize, rectangleSize, rectangleSize);
+                    }
+                }
+            }
+        }
+    }
+
+    this.renderCoins = function() {
+        goldImage = new Image();
+        goldImage.src = "images/coin.png";
+        goldImage.onload = function() {
+            for (var i = 0; i < gridSize; i++) {
+                for (var j = 0; j < gridSize; j++) {
+                    if(grid[i][j].type === "gold")
+                    {
+                        context.drawImage(goldImage, j * rectangleSize, i * rectangleSize, rectangleSize, rectangleSize);
                     }
                 }
             }
@@ -43,5 +57,6 @@ function map() {
         this.initializeGrid();
         this.addNeighbors();
         this.renderTrees();
+        this.renderCoins();
     }
 }
