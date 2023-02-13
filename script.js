@@ -1,36 +1,6 @@
-var start;
-var end;
-var w,h;
-var stop = false;
-const rectangleSize = 15;
-const gridSize = 30;
-const canvas = document.getElementById("myCanvas");
-const context = canvas.getContext("2d");
+var map = new map();
+map.setup();
 
-var grid = new Array(gridSize);
-
-function setup() {
-
-    // making a 2D array
-    for (var i = 0; i < gridSize; i++) {
-        grid[i] = new Array(gridSize);
-    }
-
-    for (var i = 0; i < gridSize; i++) {
-        for (var j = 0; j < gridSize; j++) {
-            grid[i][j] = new Spot(i, j);
-        }
-    }
-
-    for (var i = 0; i < gridSize; i++) {
-      for (var j = 0; j < gridSize; j++) {
-          grid[i][j].addNeighbors(grid);
-      }
-    }
-    start = grid[0][0];
-}
-
-setup();
 for (var i = 0; i < gridSize; i++) {
     for (var j = 0; j < gridSize; j++) {
         grid[i][j].show();
@@ -38,8 +8,9 @@ for (var i = 0; i < gridSize; i++) {
     }
 }
 
+start = grid[0][0];
 var player = new Player(0, 0);
-player.show()
+player.render();
 
 canvas.addEventListener("click", (event) => {
     path = [];
@@ -70,7 +41,6 @@ canvas.addEventListener("click", (event) => {
         path[i].color="blue";
     }
 
-    redrawGrid();
     player.walk();
 
     reset(row, col);

@@ -4,29 +4,31 @@ function Spot(i, j) {
     this.f = 0;
     this.g = 0;
     this.h = 0;
-    this.color = "white";
+    this.color = baseGridColor;
     this.neighbors = [];
     this.previous = undefined;
     this.type = null;
 
-    if (Math.random() < 0.1) {
+    if (Math.random() < 0.2) {
       this.type = "wall";
-      this.color = "black";
+      this.color = baseWallColor;
     }
 
     if (Math.random() < 0.1) {
-        if (this.type != "wall")
+        console.log(this.type)
+        if (this.type !== "wall")
         {
             this.type = "gold"; 
             this.color = "yellow";
+        }
+        else {
+            console.log("can't place gold here")
         }
     }
   
     this.show = function () {
         context.fillStyle = this.color;
         context.fillRect(this.j * rectangleSize, this.i * rectangleSize, rectangleSize, rectangleSize);
-        context.strokeRect(this.j * rectangleSize, this.i * rectangleSize, rectangleSize, rectangleSize);
-        context.strokeStyle = "black";
     } 
     
     this.addNeighbors = function (grid) {

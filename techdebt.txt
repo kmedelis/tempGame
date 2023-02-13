@@ -1,0 +1,8 @@
+BUGS
+
+IMPORTANT FIX
+
+MEDIUM IMPORTANCE
+1. maybe fix rendering, by adding them so some list and then loop through the list in one go. Right now there are different functions
+
+LOW IMPORTANCE
