@@ -7,13 +7,21 @@ function Spot(i, j) {
     this.color = "white";
     this.neighbors = [];
     this.previous = undefined;
-    this.wall = false;
+    this.type = null;
 
     if (Math.random() < 0.1) {
-      this.wall = true;
+      this.type = "wall";
       this.color = "black";
     }
 
+    if (Math.random() < 0.1) {
+        if (this.type != "wall")
+        {
+            this.type = "gold"; 
+            this.color = "yellow";
+        }
+    }
+  
     this.show = function () {
         context.fillStyle = this.color;
         context.fillRect(this.j * rectangleSize, this.i * rectangleSize, rectangleSize, rectangleSize);

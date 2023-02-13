@@ -9,35 +9,6 @@ const context = canvas.getContext("2d");
 
 var grid = new Array(gridSize);
 
-function Player(i, j) {
-    this.i = i;
-    this.j = j;
-
-    this.show = function () {
-        context.fillStyle = "green";
-        context.fillRect(this.j * rectangleSize, this.i * rectangleSize, rectangleSize, rectangleSize);
-    }
-
-    this.walk = function () {
-        for (var i = path.length - 1; i >= 0; i--) {
-        var self = this;
-        (function(i, player) {
-            setTimeout(function() {
-                var next = path.pop();
-                grid[self.i][self.j].color = "white";
-                grid[self.i][self.j].show();
-                player.i = next.i;
-                player.j = next.j;
-                player.show();
-                }, (path.length - i) * 200);
-        })(i, this);
-
-        }
-        console.log(player)
-    }
-
-}
-
 function setup() {
 
     // making a 2D array
@@ -60,7 +31,6 @@ function setup() {
 }
 
 setup();
-console.log(grid[0][0])
 for (var i = 0; i < gridSize; i++) {
     for (var j = 0; j < gridSize; j++) {
         grid[i][j].show();
@@ -70,15 +40,13 @@ for (var i = 0; i < gridSize; i++) {
 
 var player = new Player(0, 0);
 player.show()
-console.log(player);
 
 canvas.addEventListener("click", (event) => {
-
+    path = [];
     resetInformationAboutPrevious();
 
     resetDrawnGridPaths();
 
-    console.log(player.i, player.j)
     // get the x and y position of the click
     const x = event.clientX - canvas.offsetLeft;
     const y = event.clientY - canvas.offsetTop;
@@ -97,15 +65,12 @@ canvas.addEventListener("click", (event) => {
         go(row, col);
     }
 
-    grid[row][col].color = "red";
-
     // path[path.length - 1].color="green";
     for (var i = 0; i < path.length-1; i++) {
         path[i].color="blue";
     }
 
     redrawGrid();
-    console.log(player.i)
     player.walk();
 
     reset(row, col);
@@ -113,7 +78,8 @@ canvas.addEventListener("click", (event) => {
 
 
 function checkIfWall(row, col) {
-    if (grid[row][col].wall) {
+    console.log(grid[row][col].type)
+    if (grid[row][col].type === "wall") {
         console.log("can't go there")
         return true;
     }
@@ -154,6 +120,6 @@ function resetInformationAboutPrevious() {
 function resetDrawnGridPaths()
 {
     for (var i = 0; i < path.length; i++) {
-        path[i].color="white";
+        path[i].color="#7CFC00";
     }
 }
