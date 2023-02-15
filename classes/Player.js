@@ -21,7 +21,7 @@ function Player(i, j) {
         }
       }
 
-    this.walk = function () {
+    this.walk = function (grid) {
         for (var i = path.length - 1; i >= 0; i--) {
             var self = this;
             (function(i, player) {

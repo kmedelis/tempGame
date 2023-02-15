@@ -1,10 +1,8 @@
-BUGS
-1. fix pathing. when going one direction and another point is clicked, then everything messes up.
-
-
-IMPORTANT FIX
+IMPORTANT 
+1. use inheritance for maps. some of the functions will be the same, some of them will be different for the battle map and the main map. 
 
 MEDIUM IMPORTANCE
+
 
 LOW IMPORTANCE
 1. maybe improve rendering, by adding them so some list and then loop through the list in one go. Right now there are different functions

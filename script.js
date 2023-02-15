@@ -1,21 +1,27 @@
-var map = new map();
+var player = new Player(0, 0);
+
+var map = new Map(player);
 map.setup();
 
-for (var i = 0; i < gridSize; i++) {
-    for (var j = 0; j < gridSize; j++) {
-        grid[i][j].show();
-    }
+function showFirst() {
+    canvas.classList.remove('hide');
+    canvasBattle.classList.add('hide');
 }
 
-var player = new Player(0, 0);
-start = grid[player.i][player.j];
+function showSecond() {
+    canvas.classList.add('hide');
+    canvasBattle.classList.remove('hide');
+}
+
+showFirst();
+
 player.render();
 
 canvas.addEventListener("click", (event) => {
     path = [];
-    resetInformationAboutPrevious();
 
-    resetDrawnGridPaths();
+    map.resetInformationAboutPrevious();
+    map.resetDrawnGridPaths();
 
     // get the x and y position of the click
     const x = event.clientX - canvas.offsetLeft;
@@ -27,12 +33,12 @@ canvas.addEventListener("click", (event) => {
   
     // do something with the row and column
 
-    var isWall = checkIfWall(row, col);
+    var isWall = map.checkIfWall(row, col);
     if (isWall) {
         return;
     }
     else {
-        go(row, col);
+        map.go(row, col);
     }
 
     // path[path.length - 1].color="green";
@@ -40,55 +46,7 @@ canvas.addEventListener("click", (event) => {
         path[i].color="blue";
     }
 
-    player.walk();
+    player.walk(map.grid);
 
-    reset(row, col);
+    map.reset(row, col);
 });
-
-
-function checkIfWall(row, col) {
-    console.log(grid[row][col].type)
-    if (grid[row][col].type === "wall") {
-        console.log("can't go there")
-        return true;
-    }
-    return false
-}
-
-function reset(row, col) {
-    start = grid[row][col];
-    stop = false;
-    openSet = [];
-    closedSet = [];
-}
-
-function go(row, col) {
-    end = grid[row][col];
-    openSet.push(start);
-
-    while(!stop) {
-        pathFinding();
-    }
-}
-function redrawGrid() {
-    for (var i = 0; i < gridSize; i++) {
-        for (var j = 0; j < gridSize; j++) {
-            grid[i][j].show();
-        }
-    }
-}
-
-function resetInformationAboutPrevious() {
-    for (var i = 0; i < gridSize; i++) {
-        for (var j = 0; j < gridSize; j++) {
-            grid[i][j].previous = undefined;
-        }
-    }
-}
-
-function resetDrawnGridPaths()
-{
-    for (var i = 0; i < path.length; i++) {
-        path[i].color="#7CFC00";
-    }
-}
