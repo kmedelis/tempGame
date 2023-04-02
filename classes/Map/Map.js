@@ -1,41 +1,47 @@
 class Map {
-    constructor(player) {
-        this.grid = new Array(gridSize);
+    constructor(player, gridSize, canvas, context) {
+        this.grid = new Array(this.gridSize);
         this.player = player;
+        this.gridSize = gridSize;
+        this.canvas = canvas;
+        this.rectangleSize = this.canvas.width / this.gridSize;
+        this.context = context;
     }
 
     InitializeArray() {
-        for (var i = 0; i < gridSize; i++) {
-            this.grid[i] = new Array(gridSize);
+        for (var i = 0; i < this.gridSize; i++) {
+            this.grid[i] = new Array(this.gridSize);
         }
     }
 
     initializeGrid() {
-        for (var i = 0; i < gridSize; i++) {
-            for (var j = 0; j < gridSize; j++) {
-                this.grid[i][j] = new Spot(i, j);     
+        for (var i = 0; i < this.gridSize; i++) {
+            for (var j = 0; j < this.gridSize; j++) {
+                this.grid[i][j] = new MapSpot(i, j, this.gridSize, this.rectangleSize);     
             }
         }
     }
 
     addNeighbors() {
-        for (var i = 0; i < gridSize; i++) {
-            for (var j = 0; j < gridSize; j++) {
-                this.grid[i][j].addNeighbors(this.grid);
+        for (var i = 0; i < this.gridSize; i++) {
+            for (var j = 0; j < this.gridSize; j++) {
+                this.grid[i][j].addNeighbors(this.grid, this.gridSize);
           }
         }
     }
 
     drawGrid() {
-        for (var i = 0; i < gridSize; i++) {
-            for (var j = 0; j < gridSize; j++) {
-                this.grid[i][j].show();
+        let self = this;
+        for (var i = 0; i < this.gridSize; i++) {
+            for (var j = 0; j < this.gridSize; j++) {
+                this.grid[i][j].show(this.context);
             }
         }
     }
 
     setStartingPlayerLocation() {
         start = this.grid[this.player.i][this.player.j];
+        console.log(start)
     }
 
     renderTrees() {
@@ -43,11 +49,12 @@ class Map {
         let treeImage = new Image();
         treeImage.src = "images/tree.png";
         treeImage.onload = function() {
-            for (var i = 0; i < gridSize; i++) {
-                for (var j = 0; j < gridSize; j++) {
+            for (var i = 0; i < self.gridSize; i++) {
+                for (var j = 0; j < self.gridSize; j++) {
                     if(self.grid[i][j].type === "wall")
                     {
-                        context.drawImage(treeImage, j * rectangleSize, i * rectangleSize, rectangleSize, rectangleSize);
+                        console.log("draw tree")
+                        self.context.drawImage(treeImage, j * self.rectangleSize, i * self.rectangleSize, self.rectangleSize, self.rectangleSize);
                     }
                 }
             }
@@ -60,11 +67,11 @@ class Map {
         let goldImage = new Image();
         goldImage.src = "images/coin.png";
         goldImage.onload = function() {
-            for (var i = 0; i < gridSize; i++) {
-                for (var j = 0; j < gridSize; j++) {
+            for (var i = 0; i < self.gridSize; i++) {
+                for (var j = 0; j < self.gridSize; j++) {
                     if(self.grid[i][j].type === "gold")
                     {
-                        context.drawImage(goldImage, j * rectangleSize, i * rectangleSize, rectangleSize, rectangleSize);
+                        self.context.drawImage(goldImage, j * self.rectangleSize, i * self.rectangleSize, self.rectangleSize, self.rectangleSize);
                     }
                 }
             }
@@ -72,15 +79,14 @@ class Map {
     }
     
     resetInformationAboutPrevious() {
-        for (var i = 0; i < gridSize; i++) {
-            for (var j = 0; j < gridSize; j++) {
+        for (var i = 0; i < this.gridSize; i++) {
+            for (var j = 0; j < this.gridSize; j++) {
                 this.grid[i][j].previous = undefined;
             }
         }
     }
 
     checkIfWall(row, col) {
-        console.log(this.grid[row][col].type)
         if (this.grid[row][col].type === "wall") {
             console.log("can't go there")
             return true;
@@ -105,19 +111,19 @@ class Map {
     }
 
     resetDrawnGridPaths()
-{
-    for (var i = 0; i < path.length; i++) {
-        path[i].color="#7CFC00";
+    {
+        for (var i = 0; i < path.length; i++) {
+            path[i].color="#7CFC00";
+        }
     }
-}
 
     setup() {
         this.InitializeArray();
         this.initializeGrid();
         this.addNeighbors();
-        this.drawGrid()
         this.renderTrees();
         this.renderCoins();
         this.setStartingPlayerLocation();
+        this.drawGrid()
     }
 }

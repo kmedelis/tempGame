@@ -13,7 +13,6 @@ function pathFinding() {
       }
 
       var current = openSet[winner];
- 
       if (current === end) {
         path.unshift(current);
         stop = true;
@@ -28,7 +27,7 @@ function pathFinding() {
       for (var i = 0; i < neighbors.length; i++) {
         var neighbor = neighbors[i];
         var newPath = false;
-        if (!closedSet.includes(neighbor) && (neighbor === end || neighbor.type === null)) {
+        if (!closedSet.includes(neighbor) && (neighbor === end || neighbor.type !== "wall")) {
           var tempG = current.g + 1;
           var newPath = false;
           if (openSet.includes(neighbor)) {
@@ -79,3 +78,48 @@ function removeFromArray(arr, elt) {
         }
     }
 }
+
+function BFS(startRow, startCol, maxDistance, grid, gridSize) {
+  var queue = [];
+  var visited = new Set();
+  var distance = new Array(gridSize);
+  for (var i = 0; i < gridSize; i++) {
+    distance[i] = new Array(gridSize);
+  }
+
+  queue.push([startRow, startCol]);
+  visited.add(startRow + "," + startCol);
+  distance[startRow][startCol] = 0;
+
+  while (queue.length > 0) {
+    var current = queue.shift();
+    var currentRow = current[0];
+    var currentCol = current[1];
+
+    // Generate only the four adjacent neighbors
+    var neighbors = [];
+    if (currentRow > 0) neighbors.push([currentRow - 1, currentCol]);
+    if (currentRow < gridSize - 1) neighbors.push([currentRow + 1, currentCol]);
+    if (currentCol > 0) neighbors.push([currentRow, currentCol - 1]);
+    if (currentCol < gridSize - 1) neighbors.push([currentRow, currentCol + 1]);
+
+    for (var i = 0; i < neighbors.length; i++) {
+      var neighbor = neighbors[i];
+      var neighborRow = neighbor[0];
+      var neighborCol = neighbor[1];
+
+      if (!visited.has(neighborRow + "," + neighborCol)) {
+        visited.add(neighborRow + "," + neighborCol);
+        queue.push([neighborRow, neighborCol]);
+        distance[neighborRow][neighborCol] = distance[currentRow][currentCol] + 1;
+        if (distance[neighborRow][neighborCol] <= maxDistance) {
+          grid[neighborRow][neighborCol].color = "#4169E1"; // blue color for possible path
+          grid[neighborRow][neighborCol].type = "walkable";
+        }
+      }
+    }
+  }
+}
+
+
+

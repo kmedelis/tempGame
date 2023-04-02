@@ -1,5 +1,6 @@
-1. castle
-2. monsters
-3. fighting
-4. camera tracking
-5. minimap
+1. IMPLEMENT LIKE A CORESPONDENCE SYSTEM WHERE YOU CAN PLAY ONLINE?
+2. castle
+3. monsters
+4. fighting
+5. camera tracking
+6. minimap

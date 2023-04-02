@@ -1,40 +1,100 @@
-var player = new Player(0, 0);
+const mainGridSize = 30;
+const canvas = document.getElementById("myCanvas");
+const context = canvas.getContext("2d");
+const rectangleSize = canvas.width / mainGridSize;
 
-var map = new Map(player);
-map.setup();
+const battleGridSize = 15;
+const canvasBattle = document.getElementById('canvasBattle');
+const battleContext = canvasBattle.getContext("2d");
+const rectangleSizeBattle = canvasBattle.width / battleGridSize;
+
+var inBattle;
+
+var player = new Player(0, 0, rectangleSize, context);
+var map = new Map(player, mainGridSize, canvas, context);
+
+var troop1 = new Unit(5, 5, rectangleSizeBattle, battleContext);
+var troop2 = new Unit(7, 7, rectangleSizeBattle, battleContext);
+player.addUnit(troop1);
+player.addUnit(troop2);
+
+var battleMap = new BattleMap(player, battleGridSize, canvasBattle, battleContext);
 
 function showFirst() {
-    canvas.classList.remove('hide');
+    map.setup();
+    inBattle = false;
+    canvas.classList.remove('hide'); 
     canvasBattle.classList.add('hide');
 }
 
 function showSecond() {
+    battleMap.setup(); 
+    inBattle = true;
     canvas.classList.add('hide');
     canvasBattle.classList.remove('hide');
 }
 
-showFirst();
+var turn = 0;
 
-player.render();
+showSecond();
+battleMap.getPossiblePath(5,5,5)
+
+canvasBattle.addEventListener("click", (event) => {
+    if (turn === player.army.length) {
+        turn = 0;
+    }
+
+    var currentTurn = player.army[turn];
+    turn++;
+
+    if (!inBattle) { 
+        return;
+    }
+
+    path = [];
+    battleMap.resetInformationAboutPrevious();
+    battleMap.resetDrawnGridPaths();
+
+    const x = event.clientX - canvasBattle.offsetLeft;
+    const y = event.clientY - canvasBattle.offsetTop;
+    const row = Math.floor(y / rectangleSizeBattle);
+    const col = Math.floor(x / rectangleSizeBattle);
+
+    start = battleMap.grid[currentTurn.i][currentTurn.j];
+
+    var isWalkable = battleMap.checkIfWalkable(row, col);
+    console.log(isWalkable)
+    if (!isWalkable) {
+        return;
+    }
+    else {
+        battleMap.go(row, col);
+    }
+
+    currentTurn.walk(battleMap.grid);
+
+    battleMap.reset(row, col);
+});
+
+
 
 canvas.addEventListener("click", (event) => {
-    path = [];
+    if (inBattle) { 
+        return;
+    }
 
+    path = [];
     map.resetInformationAboutPrevious();
     map.resetDrawnGridPaths();
 
-    // get the x and y position of the click
     const x = event.clientX - canvas.offsetLeft;
     const y = event.clientY - canvas.offsetTop;
-  
-    // calculate the row and column based on the x and y position
     const row = Math.floor(y / rectangleSize);
     const col = Math.floor(x / rectangleSize);
-  
-    // do something with the row and column
+
 
     var isWall = map.checkIfWall(row, col);
-    if (isWall) {
+    if (!isWall) {
         return;
     }
     else {
@@ -42,10 +102,6 @@ canvas.addEventListener("click", (event) => {
     }
 
     // path[path.length - 1].color="green";
-    for (var i = 0; i < path.length-1; i++) {
-        path[i].color="blue";
-    }
-
     player.walk(map.grid);
 
     map.reset(row, col);
