@@ -28,10 +28,12 @@ class Unit {
         for (let i = path.length - 1; i >= 0; i--) {
             await new Promise(resolve => {
                 setTimeout(() => {
+                    console.log(path.length)
                     walkingInBattle = true;
-                    this.movement -= 1;
+                    this.movement -= path.length - 1;
                     const next = path.pop();
                     grid[this.i][this.j].color = baseGridColor;
+                    grid[this.i][this.j].type = null;
                     grid[this.i][this.j].show(this.context);
                     this.i = next.i;
                     this.j = next.j;
@@ -45,7 +47,6 @@ class Unit {
             });
         }
         // Add this code to paint the last tile
-        grid[this.i][this.j].color = "#FF0000";
         grid[this.i][this.j].type = "player"
         grid[this.i][this.j].show(this.context);
         this.show();

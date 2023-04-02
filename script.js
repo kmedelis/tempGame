@@ -53,10 +53,6 @@ canvasBattle.addEventListener("click", async (event) => {
         return;
     }
 
-    if (turn === player.army.length) {
-        turn = 0;
-    }
-
     var currentTurn = player.army[turn];
 
     path = [];
@@ -71,6 +67,7 @@ canvasBattle.addEventListener("click", async (event) => {
     start = battleMap.grid[currentTurn.i][currentTurn.j];
 
     var isWalkable = battleMap.checkIfWalkable(row, col);
+    console.log(isWalkable)
     if (!isWalkable) {
         return;
     }
@@ -85,8 +82,16 @@ canvasBattle.addEventListener("click", async (event) => {
     currentTurn.show();
 
     if (currentTurn.movement <= 0) {
-        turn++;
-        player.army[turn].setMovement();
+        if (turn === player.army.length - 1) {
+            turn = 0;
+            player.army[0].setMovement();
+            battleMap.getPossiblePath(player.army[0].i, player.army[0].j, player.army[0].movement);
+        } else {
+            turn++;
+            var currentTurn = player.army[turn];
+            currentTurn.setMovement();
+            battleMap.getPossiblePath(currentTurn.i , currentTurn.j , currentTurn.movement);
+        }
     }
 });
 

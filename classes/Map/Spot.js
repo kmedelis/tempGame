@@ -14,8 +14,16 @@ class Spot {
     }
 
     show(ctx) {
+        if (this.type === "wall") {
+            return;
+        }
+        if (this.type === "player") {
+            return;
+        }
         ctx.fillStyle = this.color;
         ctx.fillRect(this.j * this.rectangleSize, this.i * this.rectangleSize, this.rectangleSize, this.rectangleSize);
+        ctx.strokeStyle = 'black';
+        ctx.strokeRect(this.j * this.rectangleSize, this.i * this.rectangleSize, this.rectangleSize, this.rectangleSize);
     }
 
     addNeighbors(grid) {
