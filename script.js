@@ -13,8 +13,8 @@ var inBattle;
 var player = new Player(0, 0, rectangleSize, context);
 var map = new Map(player, mainGridSize, canvas, context);
 
-var troop1 = new Unit(5, 5, rectangleSizeBattle, battleContext);
-var troop2 = new Unit(7, 7, rectangleSizeBattle, battleContext);
+var troop1 = new Unit(5, 5, rectangleSizeBattle, battleContext, 3);
+var troop2 = new Unit(10, 10, rectangleSizeBattle, battleContext, 3);
 player.addUnit(troop1);
 player.addUnit(troop2);
 
@@ -34,22 +34,30 @@ function showSecond() {
     canvasBattle.classList.remove('hide');
 }
 
+function initializeFirstTurn() {
+    var currentTurn = player.army[0];
+    currentTurn.setMovement();
+    battleMap.getPossiblePath(currentTurn.i , currentTurn.j , currentTurn.movement);
+}
+
 var turn = 0;
-
 showSecond();
-battleMap.getPossiblePath(5,5,5)
+initializeFirstTurn();
 
-canvasBattle.addEventListener("click", (event) => {
+canvasBattle.addEventListener("click", async (event) => {
+    if (!inBattle) { 
+        return;
+    }
+
+    if (walkingInBattle) {
+        return;
+    }
+
     if (turn === player.army.length) {
         turn = 0;
     }
 
     var currentTurn = player.army[turn];
-    turn++;
-
-    if (!inBattle) { 
-        return;
-    }
 
     path = [];
     battleMap.resetInformationAboutPrevious();
@@ -63,7 +71,6 @@ canvasBattle.addEventListener("click", (event) => {
     start = battleMap.grid[currentTurn.i][currentTurn.j];
 
     var isWalkable = battleMap.checkIfWalkable(row, col);
-    console.log(isWalkable)
     if (!isWalkable) {
         return;
     }
@@ -71,9 +78,16 @@ canvasBattle.addEventListener("click", (event) => {
         battleMap.go(row, col);
     }
 
-    currentTurn.walk(battleMap.grid);
-
+    await currentTurn.walk(battleMap.grid);
     battleMap.reset(row, col);
+    battleMap.resetWalkablePath();
+    battleMap.getPossiblePath(currentTurn.i , currentTurn.j , currentTurn.movement);
+    currentTurn.show();
+
+    if (currentTurn.movement <= 0) {
+        turn++;
+        player.army[turn].setMovement();
+    }
 });
 
 
@@ -94,7 +108,7 @@ canvas.addEventListener("click", (event) => {
 
 
     var isWall = map.checkIfWall(row, col);
-    if (!isWall) {
+    if (isWall) {
         return;
     }
     else {

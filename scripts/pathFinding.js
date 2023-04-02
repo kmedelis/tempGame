@@ -91,12 +91,13 @@ function BFS(startRow, startCol, maxDistance, grid, gridSize) {
   visited.add(startRow + "," + startCol);
   distance[startRow][startCol] = 0;
 
+  var changedElements = []; 
+
   while (queue.length > 0) {
     var current = queue.shift();
     var currentRow = current[0];
     var currentCol = current[1];
 
-    // Generate only the four adjacent neighbors
     var neighbors = [];
     if (currentRow > 0) neighbors.push([currentRow - 1, currentCol]);
     if (currentRow < gridSize - 1) neighbors.push([currentRow + 1, currentCol]);
@@ -112,14 +113,19 @@ function BFS(startRow, startCol, maxDistance, grid, gridSize) {
         visited.add(neighborRow + "," + neighborCol);
         queue.push([neighborRow, neighborCol]);
         distance[neighborRow][neighborCol] = distance[currentRow][currentCol] + 1;
-        if (distance[neighborRow][neighborCol] <= maxDistance) {
-          grid[neighborRow][neighborCol].color = "#4169E1"; // blue color for possible path
-          grid[neighborRow][neighborCol].type = "walkable";
+        if (distance[neighborRow][neighborCol] <= maxDistance && grid[neighborRow][neighborCol].type == null) {
+          var element = grid[neighborRow][neighborCol];
+          element.color = "#4169E1"; 
+          element.type = "walkable";
+          changedElements.push(element); 
         }
       }
     }
   }
+
+  return changedElements; 
 }
+
 
 
 

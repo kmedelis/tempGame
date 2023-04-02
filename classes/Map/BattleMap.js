@@ -6,6 +6,7 @@ class BattleMap {
         this.canvas = canvas;
         this.rectangleSize = this.canvas.width / this.gridSize;
         this.context = context;
+        this.walkablePath = [];
     }
 
     InitializeArray() {
@@ -47,15 +48,13 @@ class BattleMap {
     }
 
     checkIfWalkable(row, col) {
-        console.log(this.grid[row][col].type)
         if (this.grid[row][col].type !== "walkable") {
-            console.log("can't go there")
             return false;
         }
         return true
     }
 
-    go(row, col) {
+    async go(row, col) {
         end = this.grid[row][col];
         openSet.push(start);
     
@@ -95,15 +94,41 @@ class BattleMap {
     }
 
     getPossiblePath(row, col, maxSteps) {
-        this.reset(row, col);
-        BFS(row, col, maxSteps, this.grid, this.gridSize);
+        this.walkablePath = BFS(row, col, maxSteps, this.grid, this.gridSize);
         this.drawGrid();
-      }      
+    }      
+
+    resetWalkablePath() {
+        for (let i = 0; i < this.walkablePath.length; i++) {
+            if (this.walkablePath[i].type == "walkable") {
+                this.walkablePath[i].color = baseGridColor;
+                this.walkablePath[i].type = null;
+                this.walkablePath[i].show(this.context);
+            }
+        }
+    }
+
+    drawGrid() {
+        for (var i = 0; i < this.gridSize; i++) {
+            for (var j = 0; j < this.gridSize; j++) {
+                this.grid[i][j].show(this.context);
+            }
+        }
+    }
+
+    initializeTroopPositions() {
+        for (var i = 0; i < this.player.army.length; i++) {
+            let troop = this.player.army[i];
+            this.grid[troop.i][troop.j].type = "player";
+        }
+    }
+
 
     setup() {
         this.InitializeArray();
         this.initializeGrid();
         this.addNeighbors();
-        this.drawGrid()
+        this.drawGrid();
+        this.initializeTroopPositions();
     }
 }
