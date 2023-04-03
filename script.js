@@ -9,16 +9,18 @@ const battleContext = canvasBattle.getContext("2d");
 const rectangleSizeBattle = canvasBattle.width / battleGridSize;
 
 var inBattle;
+var armyQue;
 
-var player = new Player(0, 0, rectangleSize, context);
-var map = new Map(player, mainGridSize, canvas, context);
+var player1 = new Player(0, 0, rectangleSize, context);
+var player2 = new Player(0, 0, rectangleSize, context);
+var map = new Map(player1, player2, mainGridSize, canvas, context);
 
-var troop1 = new Unit(5, 5, rectangleSizeBattle, battleContext, 3);
-var troop2 = new Unit(10, 10, rectangleSizeBattle, battleContext, 3);
-player.addUnit(troop1);
-player.addUnit(troop2);
+var troop1 = new Unit(5, 5, rectangleSizeBattle, battleContext, 3, "player");
+var troop2 = new Unit(10, 10, rectangleSizeBattle, battleContext, 3, "player");
+player1.addUnit(troop1);
+player2.addUnit(troop2);
 
-var battleMap = new BattleMap(player, battleGridSize, canvasBattle, battleContext);
+var battleMap = new BattleMap(player1, player2, battleGridSize, canvasBattle, battleContext);
 
 function showFirst() {
     map.setup();
@@ -35,7 +37,8 @@ function showSecond() {
 }
 
 function initializeFirstTurn() {
-    var currentTurn = player.army[0];
+    armyQue = player1.army.concat(player2.army);
+    currentTurn = armyQue[0]
     currentTurn.setMovement();
     battleMap.getPossiblePath(currentTurn.i , currentTurn.j , currentTurn.movement);
 }
@@ -53,7 +56,7 @@ canvasBattle.addEventListener("click", async (event) => {
         return;
     }
 
-    var currentTurn = player.army[turn];
+    var currentTurn = armyQue[turn];
 
     path = [];
     battleMap.resetInformationAboutPrevious();
@@ -67,7 +70,9 @@ canvasBattle.addEventListener("click", async (event) => {
     start = battleMap.grid[currentTurn.i][currentTurn.j];
 
     var isWalkable = battleMap.checkIfWalkable(row, col);
+    var isEnemy = battleMap.checkIfEnemy(row, col);
     console.log(isWalkable)
+
     if (!isWalkable) {
         return;
     }
@@ -82,13 +87,13 @@ canvasBattle.addEventListener("click", async (event) => {
     currentTurn.show();
 
     if (currentTurn.movement <= 0) {
-        if (turn === player.army.length - 1) {
+        if (turn === armyQue.length - 1) {
             turn = 0;
-            player.army[0].setMovement();
-            battleMap.getPossiblePath(player.army[0].i, player.army[0].j, player.army[0].movement);
+            armyQue[0].setMovement();
+            battleMap.getPossiblePath(armyQue[0].i, armyQue[0].j, armyQue[0].movement);
         } else {
             turn++;
-            var currentTurn = player.army[turn];
+            var currentTurn = armyQue[turn];
             currentTurn.setMovement();
             battleMap.getPossiblePath(currentTurn.i , currentTurn.j , currentTurn.movement);
         }

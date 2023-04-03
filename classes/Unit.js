@@ -1,5 +1,5 @@
 class Unit {
-    constructor(i, j, rectangleSize, context, speed) {
+    constructor(i, j, rectangleSize, context, speed, team) {
         this.image = new Image();
         this.image.src = "images/duckMan.png";
         this.i = i;
@@ -7,6 +7,9 @@ class Unit {
         this.rectangleSize = rectangleSize;
         this.context = context;
         this.speed = speed;
+        this.attack = 1;
+        this.health = 10;
+        this.team = team;
         this.walking = false;
         this.movement = 0;
 
@@ -22,6 +25,10 @@ class Unit {
 
     setMovement() {
         this.movement = this.speed;
+    }
+
+    attack() {
+
     }
 
     async walk(grid) {
@@ -46,8 +53,7 @@ class Unit {
                 }, (path.length - i) * 100);
             });
         }
-        // Add this code to paint the last tile
-        grid[this.i][this.j].type = "player"
+        grid[this.i][this.j].type = this.team;
         grid[this.i][this.j].show(this.context);
         this.show();
     }

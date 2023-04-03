@@ -1,7 +1,8 @@
 class BattleMap {
-    constructor(player, gridSize, canvas, context) {
+    constructor(player1, player2, gridSize, canvas, context) {
         this.grid = new Array(this.gridSize);
-        this.player = player;
+        this.player1 = player1;
+        this.player2 = player2;
         this.gridSize = gridSize;
         this.canvas = canvas;
         this.rectangleSize = this.canvas.width / this.gridSize;
@@ -49,6 +50,13 @@ class BattleMap {
 
     checkIfWalkable(row, col) {
         if (this.grid[row][col].type !== "walkable") {
+            return false;
+        }
+        return true
+    }
+
+    checkIfEnemy(row, col) {
+        if (this.grid[row][col].type !== "enemy") {
             return false;
         }
         return true
@@ -117,8 +125,12 @@ class BattleMap {
     }
 
     initializeTroopPositions() {
-        for (var i = 0; i < this.player.army.length; i++) {
-            let troop = this.player.army[i];
+        for (var i = 0; i < this.player1.army.length; i++) {
+            let troop = this.player1.army[i];
+            this.grid[troop.i][troop.j].type = "player";
+        }
+        for (var i = 0; i < this.player2.army.length; i++) {
+            let troop = this.player2.army[i];
             this.grid[troop.i][troop.j].type = "player";
         }
     }
