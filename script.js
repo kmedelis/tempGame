@@ -15,8 +15,8 @@ var player1 = new Player(0, 0, rectangleSize, context);
 var player2 = new Player(0, 0, rectangleSize, context);
 var map = new Map(player1, player2, mainGridSize, canvas, context);
 
-var troop1 = new Unit(5, 5, rectangleSizeBattle, battleContext, 3, "player");
-var troop2 = new Unit(10, 10, rectangleSizeBattle, battleContext, 3, "player");
+var troop1 = new Unit(5, 5, rectangleSizeBattle, battleContext, 3, "player1");
+var troop2 = new Unit(6, 5, rectangleSizeBattle, battleContext, 3, "player2");
 player1.addUnit(troop1);
 player2.addUnit(troop2);
 
@@ -39,6 +39,9 @@ function showSecond() {
 function initializeFirstTurn() {
     armyQue = player1.army.concat(player2.army);
     currentTurn = armyQue[0]
+    for (var i = 0; i < armyQue.length; i++) {
+        battleMap.grid[armyQue[i].i][armyQue[i].j].unit = armyQue[i];
+    }
     currentTurn.setMovement();
     battleMap.getPossiblePath(currentTurn.i , currentTurn.j , currentTurn.movement);
 }
@@ -70,9 +73,14 @@ canvasBattle.addEventListener("click", async (event) => {
     start = battleMap.grid[currentTurn.i][currentTurn.j];
 
     var isWalkable = battleMap.checkIfWalkable(row, col);
-    var isEnemy = battleMap.checkIfEnemy(row, col);
-    console.log(isWalkable)
+    var isEnemy = battleMap.checkIfEnemy(row, col, currentTurn);
+    console.log(isEnemy)
 
+    if (isEnemy) {
+        var enemy = battleMap.grid[row][col].unit;
+        currentTurn.attack(enemy);
+        return;
+    }
     if (!isWalkable) {
         return;
     }

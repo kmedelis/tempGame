@@ -55,11 +55,17 @@ class BattleMap {
         return true
     }
 
-    checkIfEnemy(row, col) {
-        if (this.grid[row][col].type !== "enemy") {
+    checkIfEnemy(row, col, player) {
+        let enemy = this.grid[row][col].getUnit()
+        console.log(enemy.team)
+        console.log(player.team)
+        if (enemy === null) {
             return false;
         }
-        return true
+        if (player.team !== enemy.team) {
+            return true;
+        }
+        return false
     }
 
     async go(row, col) {

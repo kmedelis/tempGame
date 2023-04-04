@@ -2,7 +2,7 @@ IMPORTANT
 1. use inheritance for maps. some of the functions will be the same, some of them will be different for the battle map and the main map. 
 
 MEDIUM IMPORTANCE
-
+1. improve performance by removing some unecesary checks. For example, the enemy object is returned and then checked every single click, which could be bad for performance
 
 LOW IMPORTANCE
-1. maybe improve rendering, by adding them so some list and then loop through the list in one go. Right now there are different functions
+1. improve rendering, by adding them so some list and then loop through the list in one go. Right now there are different functions

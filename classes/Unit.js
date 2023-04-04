@@ -7,7 +7,7 @@ class Unit {
         this.rectangleSize = rectangleSize;
         this.context = context;
         this.speed = speed;
-        this.attack = 1;
+        this.attackDmg = 1;
         this.health = 10;
         this.team = team;
         this.walking = false;
@@ -27,11 +27,22 @@ class Unit {
         this.movement = this.speed;
     }
 
-    attack() {
+    die() {
+        this.image.src = "images/deadDuckMan.png";
+        this.show();
+    }
 
+    attack(enemy) {
+        enemy.health -= this.attackDmg;
+        console.log("attack")
+        if (enemy.health <= 0) {
+            enemy.die();
+        }
     }
 
     async walk(grid) {
+        grid[this.i][this.j].type = null;
+        grid[this.i][this.j].unit = null;
         for (let i = path.length - 1; i >= 0; i--) {
             await new Promise(resolve => {
                 setTimeout(() => {
@@ -53,7 +64,8 @@ class Unit {
                 }, (path.length - i) * 100);
             });
         }
-        grid[this.i][this.j].type = this.team;
+        grid[this.i][this.j].type = "player";
+        grid[this.i][this.j].unit = this;
         grid[this.i][this.j].show(this.context);
         this.show();
     }

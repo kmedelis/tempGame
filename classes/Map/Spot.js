@@ -11,13 +11,24 @@ class Spot {
         this.gridSize = gridSize;
         this.rectangleSize = rectangleSize;
         this.type = null;
+        this.unit = null;
+    }
+
+    setUnit(unit) {
+        this.unit = unit;
+    }
+
+    getUnit() {
+        return this.unit;
     }
 
     show(ctx) {
-        if (this.type === "wall") {
-            return;
-        }
         if (this.type === "player") {
+            ctx.fillStyle = this.color;
+            ctx.fillRect(this.j * this.rectangleSize, this.i * this.rectangleSize, this.rectangleSize, this.rectangleSize);
+            ctx.strokeStyle = 'black';
+            ctx.strokeRect(this.j * this.rectangleSize, this.i * this.rectangleSize, this.rectangleSize, this.rectangleSize);
+            this.unit.show()
             return;
         }
         ctx.fillStyle = this.color;
