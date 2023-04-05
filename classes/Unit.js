@@ -12,10 +12,20 @@ class Unit {
         this.team = team;
         this.walking = false;
         this.movement = 0;
+        this.id = null;
+        this.color = this.determineColor();
 
         const self = this;
         this.image.onload = function() {
             self.show();
+        }
+    }
+
+    determineColor() {
+        if (this.team === "player1") {
+            return team1Color;
+        } else if (this.team === "player2") {
+            return team2Color;
         }
     }
 
@@ -32,12 +42,14 @@ class Unit {
         this.show();
     }
 
-    attack(enemy) {
+    tryToKill(enemy) {
         enemy.health -= this.attackDmg;
         console.log("attack")
         if (enemy.health <= 0) {
             enemy.die();
+            return true;
         }
+        return false;
     }
 
     async walk(grid) {
@@ -64,9 +76,11 @@ class Unit {
                 }, (path.length - i) * 100);
             });
         }
-        grid[this.i][this.j].type = "player";
-        grid[this.i][this.j].unit = this;
-        grid[this.i][this.j].show(this.context);
+        var gridObject = grid[this.i][this.j];
+        gridObject.type = "player";
+        gridObject.unit = this;
+        gridObject.color = this.color;
+        gridObject.show(this.context);
         this.show();
     }
     

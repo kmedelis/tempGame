@@ -7,8 +7,13 @@
       <canvas id="myCanvas" width="600" height="600"></canvas>
       <canvas id="canvasBattle" width="600" height="600"></canvas>
       <div id="userinfo">
-        <div>Gold:</div>
-        <div id="goldAmount">0</div>
+        <div hidden="true" id="playerInfo">
+          <div>Gold:</div>
+          <div id="goldAmount">0</div>
+        </div>
+        <div hidden="true" id="battleInfo">
+          <div>Turns</div>
+        </div>
       </div>
     </div>
     <script src="scripts/pathFinding.js"></script>
@@ -19,6 +24,7 @@
     <script src="classes/Map/BattleSpot.js"></script>
     <script src="classes/Player.js"></script>
     <script src="classes/Unit.js"></script>
+    <script src="classes/HtmlHelper.js"></script>
     <script src="variables/mapVariables.js"></script>
     <script src="script.js"></script>
   </body>

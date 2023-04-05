@@ -55,10 +55,7 @@ class BattleMap {
         return true
     }
 
-    checkIfEnemy(row, col, player) {
-        let enemy = this.grid[row][col].getUnit()
-        console.log(enemy.team)
-        console.log(player.team)
+    checkIfEnemy(player, enemy) {
         if (enemy === null) {
             return false;
         }
@@ -134,10 +131,12 @@ class BattleMap {
         for (var i = 0; i < this.player1.army.length; i++) {
             let troop = this.player1.army[i];
             this.grid[troop.i][troop.j].type = "player";
+            this.grid[troop.i][troop.j].color = team1Color;
         }
         for (var i = 0; i < this.player2.army.length; i++) {
             let troop = this.player2.army[i];
             this.grid[troop.i][troop.j].type = "player";
+            this.grid[troop.i][troop.j].color = team2Color;
         }
     }
 
