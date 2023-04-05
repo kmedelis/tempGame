@@ -14,9 +14,10 @@ var htmlHelper = new HtmlHelper();
 
 var inBattle;
 var armyQue;
+var turn = 0;
 
 var player1 = new Player(0, 0, rectangleSize, context);
-var player2 = new Player(0, 0, rectangleSize, context);
+var player2 = new Player(1, 1, rectangleSize, context);
 var map = new Map(player1, player2, mainGridSize, canvas, context);
 
 var troop1 = new Unit(5, 5, rectangleSizeBattle, battleContext, 3, "player1");
@@ -50,10 +51,12 @@ function showSecond() {
     inBattle = true;
     canvas.classList.add('hide');
     canvasBattle.classList.remove('hide');
+    initializeFirstTurn();
 }
 
 function initializeFirstTurn() {
     armyQue = player1.army.concat(player2.army);
+    armyQue.sort((a, b) => a.speed - b.speed);
     currentTurn = armyQue[0]
     for (var i = 0; i < armyQue.length; i++) {
         battleMap.grid[armyQue[i].i][armyQue[i].j].unit = armyQue[i];
@@ -66,9 +69,7 @@ function initializeFirstTurn() {
 
 }
 
-var turn = 0;
 showSecond();
-initializeFirstTurn();
 
 canvasBattle.addEventListener("click", async (event) => {
     if (!inBattle) { 
@@ -95,18 +96,24 @@ canvasBattle.addEventListener("click", async (event) => {
 
     var isWalkable = battleMap.checkIfWalkable(row, col);
     var isEnemy = battleMap.checkIfEnemy(currentTurn, enemy);
-    console.log(isEnemy)
+    var isNear = battleMap.arePointsNextToEachOther(currentTurn, row, col)
 
-    if (isEnemy) {
+    if (isEnemy && isNear) {
         var dead = currentTurn.tryToKill(enemy);
         htmlHelper.updateHealth(enemy)
+        
+        battleMap.reset(row, col);
+        battleMap.resetWalkablePath();
+        battleMap.getPossiblePath(currentTurn.i , currentTurn.j , currentTurn.movement);
+        currentTurn.show();
+
+        moveTurn(currentTurn);
         if (dead)
         {
             const index = armyQue.findIndex((i) => {
                 return i.id === enemy.id;
               })
             armyQue.splice(index, 1);
-            console.log(armyQue)
         }
         return;
     }
@@ -122,25 +129,28 @@ canvasBattle.addEventListener("click", async (event) => {
     battleMap.reset(row, col);
     battleMap.resetWalkablePath();
     battleMap.getPossiblePath(currentTurn.i , currentTurn.j , currentTurn.movement);
-
     currentTurn.show();
 
     htmlHelper.moveFirstElementToEnd(turn);
 
-    if (currentTurn.movement <= 0) {
+    moveTurn(currentTurn)
+});
+
+function moveTurn(unit) {
+    console.log(unit.movement)
+    if (unit.movement <= 0) {
         if (turn === armyQue.length - 1) {
             turn = 0;
             armyQue[0].setMovement();
             battleMap.getPossiblePath(armyQue[0].i, armyQue[0].j, armyQue[0].movement);
         } else {
             turn++;
-            var currentTurn = armyQue[turn];
-            currentTurn.setMovement();
-            battleMap.getPossiblePath(currentTurn.i , currentTurn.j , currentTurn.movement);
+            var unit = armyQue[turn];
+            unit.setMovement();
+            battleMap.getPossiblePath(unit.i , unit.j , unit.movement);
         }
     }
-});
-
+}
 
 
 canvas.addEventListener("click", (event) => {
@@ -167,7 +177,7 @@ canvas.addEventListener("click", (event) => {
     }
 
     // path[path.length - 1].color="green";
-    player.walk(map.grid);
+    player1.walk(map.grid);
 
     map.reset(row, col);
 });

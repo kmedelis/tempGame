@@ -3,7 +3,6 @@ class HtmlHelper {
     }
 
     updateHealth(enemy) {
-        console.log(enemy)
         var healthElementId = "newElement-" + enemy.id + " health";
         var healthElement = document.getElementById(healthElementId);
         healthElement.innerHTML = enemy.health;

@@ -8,7 +8,7 @@ class Unit {
         this.context = context;
         this.speed = speed;
         this.attackDmg = 1;
-        this.health = 10;
+        this.health = 2;
         this.team = team;
         this.walking = false;
         this.movement = 0;
@@ -43,8 +43,8 @@ class Unit {
     }
 
     tryToKill(enemy) {
+        this.movement = 0;
         enemy.health -= this.attackDmg;
-        console.log("attack")
         if (enemy.health <= 0) {
             enemy.die();
             return true;
@@ -58,7 +58,6 @@ class Unit {
         for (let i = path.length - 1; i >= 0; i--) {
             await new Promise(resolve => {
                 setTimeout(() => {
-                    console.log(path.length)
                     walkingInBattle = true;
                     this.movement -= path.length - 1;
                     const next = path.pop();

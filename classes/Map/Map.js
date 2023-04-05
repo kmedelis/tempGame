@@ -1,7 +1,8 @@
 class Map {
-    constructor(player, gridSize, canvas, context) {
+    constructor(player1, player2, gridSize, canvas, context) {
         this.grid = new Array(this.gridSize);
-        this.player = player;
+        this.player1 = player1;
+        this.player2 = player2;
         this.gridSize = gridSize;
         this.canvas = canvas;
         this.rectangleSize = this.canvas.width / this.gridSize;
@@ -40,7 +41,7 @@ class Map {
     }
 
     setStartingPlayerLocation() {
-        start = this.grid[this.player.i][this.player.j];
+        start = this.grid[this.player1.i][this.player1.j];
         console.log(start)
     }
 

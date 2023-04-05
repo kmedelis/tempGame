@@ -140,6 +140,15 @@ class BattleMap {
         }
     }
 
+    arePointsNextToEachOther(unit, row, col) {
+        // Calculate the absolute difference between the x and y coordinates
+        const xDiff = Math.abs(unit.i - row);
+        const yDiff = Math.abs(unit.j - col);
+      
+        // Return true if the points are next to each other, false otherwise
+        return (xDiff === 1 && yDiff === 0) || (xDiff === 0 && yDiff === 1);
+      }
+
 
     setup() {
         this.InitializeArray();
