@@ -5,22 +5,17 @@ class GameClient {
       this.playerColor = null;
       this.player = null;
       this.ws = new WebSocket("ws://localhost:9090");
-      this.btnCreate = document.getElementById("btnCreate");
-      this.btnJoin = document.getElementById("btnJoin");
-      this.txtGameId = document.getElementById("txtGameId");
-      this.divPlayers = document.getElementById("divPlayers");
+      this.btnServer = document.getElementById("btnServer");
+      this.connectionOpen = false;
   
       this.initializeEventListeners();
       this.setupWebSocket();
     }
   
     initializeEventListeners() {
-      this.btnJoin.addEventListener("click", (e) => {
-        this.joinGame();
-      });
-  
-      this.btnCreate.addEventListener("click", (e) => {
-        this.createGame();
+      this.btnServer.addEventListener("click", (e) => {
+        const buttonValue = e.target.getAttribute("value");
+        this.joinGame(buttonValue);
       });
     }
   
@@ -60,10 +55,11 @@ class GameClient {
     createGame() {
       const payload = {
         method: "create",
-        clientId: this.clientId,
       };
   
-      this.ws.send(JSON.stringify(payload));
+      setTimeout(() => {
+        this.ws.send(JSON.stringify(payload));
+      }, 1000);
     }
   
     handleConnect(response) {
@@ -73,7 +69,7 @@ class GameClient {
   
     handleCreate(response) {
       this.gameId = response.game.id;
-      console.log("game successfully created with id " + response.game.id);
+      this.btnServer.setAttribute("value", this.gameId);
     }
   
     handleUpdate(response) {
@@ -86,13 +82,11 @@ class GameClient {
     }
   
     handleJoin(response) {
-      console.log(response)
+      console.log(response.grid)
       this.player = response.player;
-      showFirst(); // refactor this 
+      showFirst(response.grid); // refactor this 
 
       const game = response.game;
     }
 
-
-
-  }
+}

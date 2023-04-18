@@ -10,6 +10,7 @@ var armyQue;
 var turn = 0;
 
 const userInfo = document.getElementById('userInfo');
+const gameMenu = document.getElementById('gameMenu');
 
 const mainGridSize = 30;
 const canvas = document.getElementById("myCanvas");

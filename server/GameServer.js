@@ -14,7 +14,7 @@ class GameServer {
     this.httpServer.listen(9090, () => console.log("Listening.. on 9090"));
 
     this.wsServer = new websocketServer({
-      httpServer: this.httpServer,
+      httpServer: this.httpServer, 
     });
 
     this.wsServer.on("request", (request) => this.handleRequest(request));
@@ -52,20 +52,55 @@ class GameServer {
   }
 
   handleCreate(result, connection) {
-    const clientId = result.clientId;
     const gameId = this.guid();
+    const grid = this.createGrid(30, 20)
     this.games[gameId] = {
       id: gameId,
       clients: [],
+      grid: grid,
     };
 
     const payload = {
       method: "create",
       game: this.games[gameId],
+      grid: grid,
     };
 
     connection.send(JSON.stringify(payload));
   }
+
+  createGrid(gridSize, rectangleSize) {
+    var grid = new Array(gridSize);
+    for (var i = 0; i < gridSize; i++) {
+      grid[i] = new Array(gridSize);
+    }
+  
+    for (var i = 0; i < gridSize; i++) {
+      for (var j = 0; j < gridSize; j++) {
+        let cell = {
+          i: i,
+          j: j,
+          type: "empty",
+          color: "green"
+        };
+  
+        if (Math.random() < 0.2) {
+          cell.type = "wall";
+        } else if (Math.random() < 0.1) {
+          cell.type = "gold";
+        } else if (Math.random() < 0.1) {
+          cell.type = "enemy";
+          cell.color = "red";
+        }
+  
+        grid[i][j] = cell;
+      }
+    }
+  
+    return grid;
+  }
+  
+
 
   handleJoin(result) {
     const clientId = result.clientId;
@@ -90,6 +125,7 @@ class GameServer {
       method: "join",
       game: game,
       player: player,
+      grid: game.grid,
     };
 
     game.clients.forEach((c) => {

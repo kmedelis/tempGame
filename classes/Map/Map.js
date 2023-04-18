@@ -23,6 +23,17 @@ class Map {
         }
     }
 
+    setGrid(grid) {
+        for (var i = 0; i < this.gridSize; i++) {
+            for (var j = 0; j < this.gridSize; j++) {
+                this.grid[i][j].i = grid[i][j].i;
+                this.grid[i][j].j = grid[i][j].j;
+                this.grid[i][j].type = grid[i][j].type;
+                this.grid[i][j].color = grid[i][j].color;  
+            }
+        }
+    }
+
     addNeighbors() {
         for (var i = 0; i < this.gridSize; i++) {
             for (var j = 0; j < this.gridSize; j++) {
@@ -44,38 +55,38 @@ class Map {
         start = this.grid[this.player1.i][this.player1.j];
     }
 
-    renderTrees() {
-        let self = this; // save a reference to the Map instance
+    renderTrees(resolve) {
+        let self = this;
         let treeImage = new Image();
         treeImage.src = "images/tree.png";
         treeImage.onload = function() {
             for (var i = 0; i < self.gridSize; i++) {
                 for (var j = 0; j < self.gridSize; j++) {
-                    if(self.grid[i][j].type === "wall")
-                    {
+                    if (self.grid[i][j].type === "wall") {
                         self.context.drawImage(treeImage, j * self.rectangleSize, i * self.rectangleSize, self.rectangleSize, self.rectangleSize);
                     }
                 }
             }
+            resolve(); // Resolve the Promise
         }
     }
     
-
-    renderCoins() {
+    renderCoins(resolve) {
         let self = this;
         let goldImage = new Image();
         goldImage.src = "images/coin.png";
         goldImage.onload = function() {
             for (var i = 0; i < self.gridSize; i++) {
                 for (var j = 0; j < self.gridSize; j++) {
-                    if(self.grid[i][j].type === "gold")
-                    {
+                    if (self.grid[i][j].type === "gold") {
                         self.context.drawImage(goldImage, j * self.rectangleSize, i * self.rectangleSize, self.rectangleSize, self.rectangleSize);
                     }
                 }
             }
+            resolve(); // Resolve the Promise
         }
     }
+    
     
     resetInformationAboutPrevious() {
         for (var i = 0; i < this.gridSize; i++) {
@@ -120,9 +131,21 @@ class Map {
         this.InitializeArray();
         this.initializeGrid();
         this.addNeighbors();
-        this.renderTrees();
-        this.renderCoins();
-        this.setStartingPlayerLocation();
-        this.drawGrid()
     }
+
+    draw() {
+        this.setStartingPlayerLocation();
+        this.drawGrid();
+    
+        const treesLoaded = new Promise((resolve) => {
+            this.renderTrees(resolve);
+        });
+    
+        const coinsLoaded = new Promise((resolve) => {
+            this.renderCoins(resolve);
+        });
+    
+        return Promise.all([treesLoaded, coinsLoaded]);
+    }
+    
 }

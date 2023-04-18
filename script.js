@@ -19,6 +19,7 @@ player2.addUnit(troop3);
 player2.addUnit(troop4);
 
 var battleMap = new BattleMap(player1, player2, battleGridSize, canvasBattle, battleContext);
+client.createGame();
 
 function hideBoth() {
     playerInfoDiv.hidden = true;
@@ -28,13 +29,22 @@ function hideBoth() {
     userinfo.hidden = true;
 }
 
-function showFirst() {
-    map.setup();
+function hideMenu() {
+    gameMenu.hidden = true;
+}
+
+async function showFirst(grid) {
+    hideMenu();
+    await map.setup();
+    map.setGrid(grid);
+    map.draw();
     playerInfoDiv.hidden = false;
     battleInfoDiv.hidden = true;
-    inBattle = false;
+    userinfo.hidden = false;
     canvas.classList.remove('hide'); 
     canvasBattle.classList.add('hide');
+
+    inBattle = false;
 }
 
 function showSecond() {
