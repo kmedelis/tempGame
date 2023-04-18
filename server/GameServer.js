@@ -35,6 +35,8 @@ class GameServer {
         this.handleJoin(result);
       } else if (result.method === "play") {
         this.handlePlay(result);
+      } else if (result.method === "playerMovement") {
+        this.handlePlayerMovement(result);
       }
     });
 
@@ -51,21 +53,63 @@ class GameServer {
     connection.send(JSON.stringify(payload));
   }
 
-  handleCreate(result, connection) {
-    const gameId = this.guid();
-    const grid = this.createGrid(30, 20)
-    this.games[gameId] = {
-      id: gameId,
-      clients: [],
-      grid: grid,
+  broadcastPlayerList(game) {
+    const payload = {
+      method: "playerList",
+      players: game.clients,
+    };
+  
+    game.clients.forEach((c) => {
+      this.clients[c.clientId].connection.send(JSON.stringify(payload));
+    });
+  }
+
+  handlePlayerMovement(result) {
+    const gameId = result.gameId;
+    const game = this.games[gameId];
+
+    const payload = {
+      method: "playerMovement",
+      row: result.row,
+      col: result.col,
     };
 
+    game.clients.forEach((c) => {
+      console.log(payload);
+      this.clients[c.clientId].connection.send(JSON.stringify(payload));
+    });
+  }
+
+  handleCreate(result, connection) {
+    let gameId;
+    let gameExists = false;
+  
+    // Check if a game already exists
+    for (const game in this.games) {
+      if (this.games[game].clients.length < 2) {
+        gameId = this.games[game].id;
+        gameExists = true;
+        break;
+      }
+    }
+  
+    // If no game exists, create a new one
+    if (!gameExists) {
+      gameId = this.guid();
+      const grid = this.createGrid(30, 20);
+      this.games[gameId] = {
+        id: gameId,
+        clients: [],
+        grid: grid,
+      };
+    }
+  
     const payload = {
       method: "create",
       game: this.games[gameId],
-      grid: grid,
+      grid: this.games[gameId].grid,
     };
-
+  
     connection.send(JSON.stringify(payload));
   }
 

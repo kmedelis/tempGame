@@ -31,6 +31,8 @@ class GameClient {
           this.handleUpdate(response);
         } else if (response.method === "join") {
           this.handleJoin(response);
+        } else if (response.method === "playerMovement") {
+          this.handlePlayerMovement(response);
         }
       };
     }
@@ -61,6 +63,19 @@ class GameClient {
         this.ws.send(JSON.stringify(payload));
       }, 1000);
     }
+
+    sendPlayerMovement(row, col) {
+      console.log("sending player movement")
+      const payload = {
+        method: 'playerMovement',
+        clientId: this.clientId,
+        gameId: this.gameId,
+        row: row,
+        col: col,
+      };
+      this.ws.send(JSON.stringify(payload));
+    }
+
   
     handleConnect(response) {
       this.clientId = response.clientId;
@@ -87,6 +102,16 @@ class GameClient {
       showFirst(response.grid); // refactor this 
 
       const game = response.game;
+    }
+
+    handlePlayerMovement(data) {
+      const row = data.row;
+      const col = data.col;
+      map.grid[player1.i][player1.j] = new MapSpot(player1.i, player1.j, mainGridSize, rectangleSize);
+      player1.i = row;
+      player1.j = col;
+      map.setStartingPlayerLocation();
+      map.drawGrid();
     }
 
 }

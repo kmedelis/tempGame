@@ -179,6 +179,7 @@ canvas.addEventListener("click", (event) => {
         map.go(row, col);
     }
 
+    client.sendPlayerMovement(row, col);
     // path[path.length - 1].color="green";
     player1.walk(map.grid);
 
