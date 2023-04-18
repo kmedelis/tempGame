@@ -42,7 +42,6 @@ class Map {
 
     setStartingPlayerLocation() {
         start = this.grid[this.player1.i][this.player1.j];
-        console.log(start)
     }
 
     renderTrees() {
@@ -54,7 +53,6 @@ class Map {
                 for (var j = 0; j < self.gridSize; j++) {
                     if(self.grid[i][j].type === "wall")
                     {
-                        console.log("draw tree")
                         self.context.drawImage(treeImage, j * self.rectangleSize, i * self.rectangleSize, self.rectangleSize, self.rectangleSize);
                     }
                 }

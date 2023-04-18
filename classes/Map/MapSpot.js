@@ -2,6 +2,8 @@ class MapSpot extends Spot {
     constructor(i, j, gridSize, rectangleSize) {
         super(i, j, gridSize, rectangleSize);
 
+        this.enemies = null;
+
         if (Math.random() < 0.2) {
             this.type = "wall";
         }

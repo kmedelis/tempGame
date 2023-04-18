@@ -1,20 +1,5 @@
-const mainGridSize = 30;
-const canvas = document.getElementById("myCanvas");
-const playerInfoDiv = document.getElementById('playerInfo');
-const context = canvas.getContext("2d");
-const rectangleSize = canvas.width / mainGridSize;
-
-const battleGridSize = 15;
-const canvasBattle = document.getElementById('canvasBattle');
-const battleInfoDiv = document.getElementById('battleInfo');
-const battleContext = canvasBattle.getContext("2d");
-const rectangleSizeBattle = canvasBattle.width / battleGridSize;
-
 var htmlHelper = new HtmlHelper();
-
-var inBattle;
-var armyQue;
-var turn = 0;
+var client = new GameClient();
 
 var player1 = new Player(0, 0, rectangleSize, context);
 var player2 = new Player(1, 1, rectangleSize, context);
@@ -34,6 +19,14 @@ player2.addUnit(troop3);
 player2.addUnit(troop4);
 
 var battleMap = new BattleMap(player1, player2, battleGridSize, canvasBattle, battleContext);
+
+function hideBoth() {
+    playerInfoDiv.hidden = true;
+    battleInfoDiv.hidden = true;
+    canvas.classList.add('hide');
+    canvasBattle.classList.add('hide');
+    userinfo.hidden = true;
+}
 
 function showFirst() {
     map.setup();
@@ -69,7 +62,7 @@ function initializeFirstTurn() {
 
 }
 
-showSecond();
+hideBoth();
 
 canvasBattle.addEventListener("click", async (event) => {
     if (!inBattle) { 
@@ -181,3 +174,4 @@ canvas.addEventListener("click", (event) => {
 
     map.reset(row, col);
 });
+

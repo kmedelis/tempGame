@@ -1,8 +1,20 @@
-<html>
-  <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <link rel="stylesheet" type="text/css" href="style.css">
-  </head>
-  <body>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <h1>Game</h1>
+    <button id = 'btnCreate'>New Game</button>
+    <button id = 'btnJoin'>Join Game</button>
+    <input type = 'text' id = 'txtGameId'>
+    <div id  = 'divPlayers'></div>
+    <div id  = 'divBoard'></div>
+
     <div id="display">
       <canvas id="myCanvas" width="600" height="600"></canvas>
       <canvas id="canvasBattle" width="600" height="600"></canvas>
@@ -16,7 +28,9 @@
         </div>
       </div>
     </div>
+
     <script src="scripts/pathFinding.js"></script>
+    <script src="classes/SocketClient/GameClient.js"></script>
     <script src="classes/Map/Map.js"></script>
     <script src="classes/Map/BattleMap.js"></script>
     <script src="classes/Map/Spot.js"></script>
@@ -27,5 +41,5 @@
     <script src="helpers/HtmlHelper.js"></script>
     <script src="variables/mapVariables.js"></script>
     <script src="script.js"></script>
-  </body>
+</body>
 </html>
