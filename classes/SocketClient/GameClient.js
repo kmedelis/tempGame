@@ -4,6 +4,7 @@ class GameClient {
       this.gameId = null;
       this.playerColor = null;
       this.player = null;
+      this.map = null;
       this.ws = new WebSocket("ws://localhost:9090");
       this.btnServer = document.getElementById("btnServer");
       this.connectionOpen = false;
@@ -33,22 +34,30 @@ class GameClient {
           this.handleJoin(response);
         } else if (response.method === "playerMovement") {
           this.handlePlayerMovement(response);
+        } else if (response.method === "broadcastJoin") {
+          this.handleBroadcastJoin(response);
         }
       };
     }
   
     joinGame() {
       if (this.gameId === null) {
-        this.gameId = this.txtGameId.value;
+        this.gameId = 1;
       }
+      let randomInt = Math.floor(Math.random() * 29);
 
-      var player = new Player(0, 0, rectangleSize, context);
+      var player = new Player(randomInt, randomInt, rectangleSize, context);
+      var map = new MainMap(player, mainGridSize, canvas, context);
+
+      this.player = player;
+      this.map = map;
   
       const payload = {
         method: "join",
-        clientId: this.clientId,
         gameId: this.gameId,
-        player: player,
+        clientId: this.clientId,
+        x: player.i,
+        y: player.j,
       };
   
       this.ws.send(JSON.stringify(payload));
@@ -97,21 +106,23 @@ class GameClient {
     }
   
     handleJoin(response) {
-      console.log(response.grid)
-      this.player = response.player;
       showFirst(response.grid); // refactor this 
 
       const game = response.game;
     }
 
+    handleBroadcastJoin(response) {
+      console.log("someone joined");
+    }
+
     handlePlayerMovement(data) {
       const row = data.row;
       const col = data.col;
-      map.grid[player1.i][player1.j] = new MapSpot(player1.i, player1.j, mainGridSize, rectangleSize);
+      this.map.grid[player1.i][player1.j] = new MapSpot(player1.i, player1.j, mainGridSize, rectangleSize);
       player1.i = row;
       player1.j = col;
-      map.setStartingPlayerLocation();
-      map.drawGrid();
+      this.map.setStartingPlayerLocation();
+      this.map.drawGrid();
     }
 
 }

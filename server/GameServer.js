@@ -53,13 +53,42 @@ class GameServer {
     connection.send(JSON.stringify(payload));
   }
 
-  broadcastPlayerList(game) {
+  handleJoin(result) {
+    const clientId = result.clientId;
+    const gameId = result.gameId;
+    const x = result.x;
+    const y = result.y;
+
+    const game = this.games[gameId];
+
+    this.broadcastJoin(game, clientId, x, y);
+
+    game.clients.push({
+      clientId: clientId,
+      x: x,
+      y: y,
+    });
+
     const payload = {
-      method: "playerList",
-      players: game.clients,
+      method: "join",
+      grid: game.grid,
     };
-  
+
     game.clients.forEach((c) => {
+      this.clients[c.clientId].connection.send(JSON.stringify(payload));
+    });
+  }
+
+  broadcastJoin(game, clientId, x, y) {
+    const payload = {
+      method: "broadcastJoin",
+      clientId: clientId,
+      x: x,
+      y: y,
+    };
+
+    game.clients.forEach((c) => {
+      console.log("sending broadcast join");
       this.clients[c.clientId].connection.send(JSON.stringify(payload));
     });
   }
@@ -142,39 +171,6 @@ class GameServer {
     }
   
     return grid;
-  }
-  
-
-
-  handleJoin(result) {
-    const clientId = result.clientId;
-    const player = result.player;
-    const gameId = result.gameId;
-    const game = this.games[gameId];
-
-    if (game.clients.length >= 3) {
-      return;
-    }
-
-    const color = { "0": "Red", "1": "Green" }[game.clients.length];
-    game.clients.push({
-      clientId: clientId,
-      color: color,
-      player: player,
-    });
-
-    if (game.clients.length === 2) this.updateGameState();
-
-    const payload = {
-      method: "join",
-      game: game,
-      player: player,
-      grid: game.grid,
-    };
-
-    game.clients.forEach((c) => {
-      this.clients[c.clientId].connection.send(JSON.stringify(payload));
-    });
   }
 
   handlePlay(result) {

@@ -23,7 +23,7 @@ class Player {
         this.context.drawImage(self.image, self.j * this.rectangleSize, self.i * this.rectangleSize, this.rectangleSize, this.rectangleSize);
     }
 
-    walk = function (grid) {
+    walk = function (grid, client) {
         for (var i = path.length - 1; i >= 0; i--) {
             var self = this;
             (function(i, player) {
@@ -33,6 +33,7 @@ class Player {
                     grid[self.i][self.j].show(self.context);
                     player.i = next.i;
                     player.j = next.j;
+                    client.sendPlayerMovement(player.i, player.j)
                     if (grid[player.i][player.j].type === "gold") {
                         player.gold++;
                         document.getElementById("goldAmount").innerHTML = player.gold;

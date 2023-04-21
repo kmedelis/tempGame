@@ -3,7 +3,6 @@ var client = new GameClient();
 
 var player1 = new Player(0, 0, rectangleSize, context);
 var player2 = new Player(1, 1, rectangleSize, context);
-var map = new Map(player1, player2, mainGridSize, canvas, context);
 
 var troop1 = new Unit(5, 5, rectangleSizeBattle, battleContext, 3, "player1");
 var troop2 = new Unit(6, 5, rectangleSizeBattle, battleContext, 4, "player1");
@@ -35,9 +34,9 @@ function hideMenu() {
 
 async function showFirst(grid) {
     hideMenu();
-    await map.setup();
-    map.setGrid(grid);
-    map.draw();
+    await client.map.setup();
+    client.map.setGrid(grid);
+    client.map.draw();
     playerInfoDiv.hidden = false;
     battleInfoDiv.hidden = true;
     userinfo.hidden = false;
@@ -73,6 +72,36 @@ function initializeFirstTurn() {
 }
 
 hideBoth();
+
+canvas.addEventListener("click", (event) => {
+    if (inBattle) { 
+        return;
+    }
+
+    path = [];
+    client.map.resetInformationAboutPrevious();
+    client.map.resetDrawnGridPaths();
+
+    const x = event.clientX - canvas.offsetLeft;
+    const y = event.clientY - canvas.offsetTop;
+    const row = Math.floor(y / rectangleSize);
+    const col = Math.floor(x / rectangleSize);
+
+
+    var isWall = client.map.checkIfWall(row, col);
+    if (isWall) {
+        return;
+    }
+    else {
+        client.map.go(row, col);
+    }
+
+    // path[path.length - 1].color="green";
+    client.player.walk(client.map.grid, client);
+
+    client.map.reset(row, col);
+});
+
 
 canvasBattle.addEventListener("click", async (event) => {
     if (!inBattle) { 
@@ -154,35 +183,3 @@ function moveTurn(unit) {
         }
     }
 }
-
-
-canvas.addEventListener("click", (event) => {
-    if (inBattle) { 
-        return;
-    }
-
-    path = [];
-    map.resetInformationAboutPrevious();
-    map.resetDrawnGridPaths();
-
-    const x = event.clientX - canvas.offsetLeft;
-    const y = event.clientY - canvas.offsetTop;
-    const row = Math.floor(y / rectangleSize);
-    const col = Math.floor(x / rectangleSize);
-
-
-    var isWall = map.checkIfWall(row, col);
-    if (isWall) {
-        return;
-    }
-    else {
-        map.go(row, col);
-    }
-
-    client.sendPlayerMovement(row, col);
-    // path[path.length - 1].color="green";
-    player1.walk(map.grid);
-
-    map.reset(row, col);
-});
-
