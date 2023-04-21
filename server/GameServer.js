@@ -32,7 +32,7 @@ class GameServer {
       if (result.method === "create") {
         this.handleCreate(result, connection);
       } else if (result.method === "join") {
-        this.handleJoin(result);
+        this.handleJoin(result, connection);
       } else if (result.method === "play") {
         this.handlePlay(result);
       } else if (result.method === "playerMovement") {
@@ -53,7 +53,7 @@ class GameServer {
     connection.send(JSON.stringify(payload));
   }
 
-  handleJoin(result) {
+  handleJoin(result, connection) {
     const clientId = result.clientId;
     const gameId = result.gameId;
     const x = result.x;
@@ -61,54 +61,59 @@ class GameServer {
 
     const game = this.games[gameId];
 
-    this.broadcastJoin(game, clientId, x, y);
-
     game.clients.push({
       clientId: clientId,
       x: x,
       y: y,
     });
 
+    this.broadcastJoin(game, clientId, x, y);
+
     const payload = {
       method: "join",
+      clients: game.clients, // Add this line to include the clients in the payload
       grid: game.grid,
+      clientId: clientId,
     };
-
-    game.clients.forEach((c) => {
-      this.clients[c.clientId].connection.send(JSON.stringify(payload));
-    });
+  
+    connection.send(JSON.stringify(payload));
   }
 
-  broadcastJoin(game, clientId, x, y) {
+  broadcastJoin(game, senderClientId, x, y) {
+    const newClient = game.clients.find((c) => c.clientId === senderClientId);
+  
     const payload = {
       method: "broadcastJoin",
-      clientId: clientId,
-      x: x,
-      y: y,
+      newClient: newClient,
     };
-
+  
     game.clients.forEach((c) => {
-      console.log("sending broadcast join");
-      this.clients[c.clientId].connection.send(JSON.stringify(payload));
+      if (c.clientId !== senderClientId) {
+        this.clients[c.clientId].connection.send(JSON.stringify(payload));
+      }
     });
   }
 
   handlePlayerMovement(result) {
     const gameId = result.gameId;
     const game = this.games[gameId];
-
+  
+    const senderClientId = result.clientId;
     const payload = {
+      movedId: senderClientId,
       method: "playerMovement",
-      row: result.row,
-      col: result.col,
+      x: result.row,
+      y: result.col,
     };
-
+  
     game.clients.forEach((c) => {
-      console.log(payload);
-      this.clients[c.clientId].connection.send(JSON.stringify(payload));
+      if (c.clientId !== senderClientId) {
+        console.log(payload);
+        this.clients[c.clientId].connection.send(JSON.stringify(payload));
+      }
     });
   }
-
+  
   handleCreate(result, connection) {
     let gameId;
     let gameExists = false;

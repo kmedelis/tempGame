@@ -1,9 +1,10 @@
 class Player {
-    constructor(i, j, rectangleSize, context) {
+    constructor(i, j, rectangleSize, context, clientId) {
         this.image = new Image();
         this.image.src = "images/player.png";
         this.i = i;
         this.j = j;
+        this.clientId = clientId;
         this.rectangleSize = rectangleSize;
         this.gold = 0;
         this.context = context;

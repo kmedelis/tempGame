@@ -4,6 +4,7 @@ class GameClient {
       this.gameId = null;
       this.playerColor = null;
       this.player = null;
+      this.players = [];
       this.map = null;
       this.ws = new WebSocket("ws://localhost:9090");
       this.btnServer = document.getElementById("btnServer");
@@ -46,7 +47,7 @@ class GameClient {
       }
       let randomInt = Math.floor(Math.random() * 29);
 
-      var player = new Player(randomInt, randomInt, rectangleSize, context);
+      var player = new Player(randomInt, randomInt, rectangleSize, context, this.clientId);
       var map = new MainMap(player, mainGridSize, canvas, context);
 
       this.player = player;
@@ -74,7 +75,6 @@ class GameClient {
     }
 
     sendPlayerMovement(row, col) {
-      console.log("sending player movement")
       const payload = {
         method: 'playerMovement',
         clientId: this.clientId,
@@ -106,23 +106,27 @@ class GameClient {
     }
   
     handleJoin(response) {
+      this.players = response.clients;
       showFirst(response.grid); // refactor this 
-
+    
       const game = response.game;
     }
-
+    
     handleBroadcastJoin(response) {
-      console.log("someone joined");
+      const newClient = response.newClient;
+      this.players.push(newClient);
     }
+    
 
     handlePlayerMovement(data) {
+      const clientId = data.clientId;
       const row = data.row;
       const col = data.col;
-      this.map.grid[player1.i][player1.j] = new MapSpot(player1.i, player1.j, mainGridSize, rectangleSize);
+      const player = this.players.find((p) => p.clientId === clientId);
+
+      this.map.grid[row][col] = 1;
       player1.i = row;
       player1.j = col;
-      this.map.setStartingPlayerLocation();
-      this.map.drawGrid();
     }
 
 }
