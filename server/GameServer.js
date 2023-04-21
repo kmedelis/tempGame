@@ -56,35 +56,41 @@ class GameServer {
   handleJoin(result, connection) {
     const clientId = result.clientId;
     const gameId = result.gameId;
-    const x = result.x;
-    const y = result.y;
+    const i = result.i; 
+    const j = result.j; 
 
+    console.log(i + " " + j)
+  
     const game = this.games[gameId];
-
+  
     game.clients.push({
       clientId: clientId,
-      x: x,
-      y: y,
+      i: i,
+      j: j, // changed from y to j
     });
-
-    this.broadcastJoin(game, clientId, x, y);
-
+  
+    this.broadcastJoin(game, clientId, i, j); // changed from x, y to i, j
+  
     const payload = {
       method: "join",
-      clients: game.clients, // Add this line to include the clients in the payload
+      clients: game.clients,
       grid: game.grid,
       clientId: clientId,
     };
   
     connection.send(JSON.stringify(payload));
   }
-
-  broadcastJoin(game, senderClientId, x, y) {
+  
+  broadcastJoin(game, senderClientId, i, j) { // changed from x, y to i, j
     const newClient = game.clients.find((c) => c.clientId === senderClientId);
   
     const payload = {
       method: "broadcastJoin",
-      newClient: newClient,
+      newClient: {
+        clientId: newClient.clientId,
+        i: i, 
+        j: j, 
+      },
     };
   
     game.clients.forEach((c) => {
@@ -93,6 +99,7 @@ class GameServer {
       }
     });
   }
+  
 
   handlePlayerMovement(result) {
     const gameId = result.gameId;
@@ -102,8 +109,10 @@ class GameServer {
     const payload = {
       movedId: senderClientId,
       method: "playerMovement",
-      x: result.row,
-      y: result.col,
+      i: result.i,
+      j: result.j,
+      oldI: result.oldI,
+      oldJ: result.oldJ,
     };
   
     game.clients.forEach((c) => {
