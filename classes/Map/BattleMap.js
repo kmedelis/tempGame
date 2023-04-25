@@ -74,11 +74,17 @@ class BattleMap {
         }
     }
 
-    reset(row, col) {
-        start = this.grid[row][col];
+    reset() {
         stop = false;
         openSet = [];
         closedSet = [];
+        for (let i = 0; i < this.walkablePath.length; i++) {
+            if (this.walkablePath[i].type == "walkable") {
+                this.walkablePath[i].color = baseGridColor;
+                this.walkablePath[i].type = null;
+                this.walkablePath[i].show(this.context);
+            }
+        }
     }
 
     resetDrawnGridPaths()
@@ -108,16 +114,6 @@ class BattleMap {
         this.walkablePath = BFS(row, col, maxSteps, this.grid, this.gridSize);
         this.drawGrid();
     }      
-
-    resetWalkablePath() {
-        for (let i = 0; i < this.walkablePath.length; i++) {
-            if (this.walkablePath[i].type == "walkable") {
-                this.walkablePath[i].color = baseGridColor;
-                this.walkablePath[i].type = null;
-                this.walkablePath[i].show(this.context);
-            }
-        }
-    }
 
     drawGrid() {
         for (var i = 0; i < this.gridSize; i++) {

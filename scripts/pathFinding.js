@@ -23,7 +23,7 @@ function pathFinding() {
     for (var i = 0; i < neighbors.length; i++) {
       var neighbor = neighbors[i];
       var newPath = false;
-      if (!closedSet.includes(neighbor) && (neighbor === end || neighbor.type !== "wall" && neighbor.type !== "gold" && neighbor.type !== "player")) {
+      if (!closedSet.includes(neighbor) && (neighbor === end || neighbor.type !== "wall" && neighbor.type !== "gold" && neighbor.type !== "player" && neighbor.type !== "AI")) {
         var tempG = current.g + 1;
         var newPath = false;
         if (openSet.includes(neighbor)) {

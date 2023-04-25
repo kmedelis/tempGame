@@ -5,12 +5,17 @@ var htmlHelper = new HtmlHelper();
 var player1 = new Player(0, 0, rectangleSize, context);
 var player2 = new Player(1, 1, rectangleSize, context);
 
-var troop1 = new Unit(5, 5, rectangleSizeBattle, battleContext, 3, "player1");
-var troop2 = new Unit(6, 5, rectangleSizeBattle, battleContext, 4, "player1");
+var troop1 = new Unit(5, 5, rectangleSizeBattle, battleContext, 3, "player");
+var troop2 = new Unit(6, 5, rectangleSizeBattle, battleContext, 3, "player");
 
-var troop3 = new Unit(5, 10, rectangleSizeBattle, battleContext, 3, "player2");
-var troop4 = new Unit(6, 10, rectangleSizeBattle, battleContext, 3, "player2");
+var troop3 = new ComputerUnit(5, 10, rectangleSizeBattle, battleContext, 2, "AI");
+var troop4 = new ComputerUnit(6, 10, rectangleSizeBattle, battleContext, 2, "AI");
 
+troop3.addPlayerUnits(troop1);
+troop3.addPlayerUnits(troop2);
+
+troop4.addPlayerUnits(troop1);
+troop4.addPlayerUnits(troop2);
 
 player1.addUnit(troop1);
 player1.addUnit(troop2);
@@ -58,7 +63,7 @@ function showSecond() {
 
 function initializeFirstTurn() {
     armyQue = player1.army.concat(player2.army);
-    armyQue.sort((a, b) => a.speed - b.speed);
+    armyQue.sort((a, b) => b.speed - a.speed);
     currentTurn = armyQue[0]
     for (var i = 0; i < armyQue.length; i++) {
         battleMap.grid[armyQue[i].i][armyQue[i].j].unit = armyQue[i];
@@ -159,17 +164,26 @@ canvasBattle.addEventListener("click", async (event) => {
     await currentTurn.walk(battleMap.grid);
 
     battleMap.reset(row, col);
-    battleMap.resetWalkablePath();
     battleMap.getPossiblePath(currentTurn.i , currentTurn.j , currentTurn.movement);
     currentTurn.show();
 
     htmlHelper.moveFirstElementToEnd(turn);
 
-    moveTurn(currentTurn)
+    moveTurn(currentTurn)   
 });
 
+async function doAiStuff(unit) {
+    start = battleMap.grid[unit.i][unit.j];
+    var shortestDistance = unit.calculateDistanceToPlayerUnits();
+    battleMap.go(shortestDistance.i, shortestDistance.j);
+    await unit.walk(battleMap.grid);
+    console.log("done")
+    battleMap.reset();
+    htmlHelper.moveFirstElementToEnd(turn);
+    moveTurn(unit)  
+}
+
 function moveTurn(unit) {
-    console.log(unit.movement)
     if (unit.movement <= 0) {
         if (turn === armyQue.length - 1) {
             turn = 0;
@@ -178,8 +192,15 @@ function moveTurn(unit) {
         } else {
             turn++;
             var unit = armyQue[turn];
-            unit.setMovement();
-            battleMap.getPossiblePath(unit.i , unit.j , unit.movement);
+            if (unit.team == "player")
+            {
+                unit.setMovement();
+                battleMap.getPossiblePath(unit.i , unit.j , unit.movement);
+            }
+            if (unit.team == "AI")
+            {
+                doAiStuff(unit)
+            }
         }
     }
 }

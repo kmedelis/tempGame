@@ -22,9 +22,9 @@ class Unit {
     }
 
     determineColor() {
-        if (this.team === "player1") {
+        if (this.team === "player") {
             return team1Color;
-        } else if (this.team === "player2") {
+        } else if (this.team === "AI") {
             return team2Color;
         }
     }
@@ -55,33 +55,40 @@ class Unit {
     async walk(grid) {
         grid[this.i][this.j].type = null;
         grid[this.i][this.j].unit = null;
-        for (let i = path.length - 1; i >= 0; i--) {
-            await new Promise(resolve => {
-                setTimeout(() => {
-                    walkingInBattle = true;
-                    this.movement -= path.length - 1;
-                    const next = path.pop();
-                    grid[this.i][this.j].color = baseGridColor;
-                    grid[this.i][this.j].type = null;
-                    grid[this.i][this.j].show(this.context);
-                    this.i = next.i;
-                    this.j = next.j;
-                    this.show();
-                    
-                    if (i === 0) {
-                        walkingInBattle = false;
-                    }
-                    resolve();
-                }, (path.length - i) * 100);
-            });
+        for (let step = path.length - 1; step >= 0; step--) {
+          console.log(step)
+          await new Promise(resolve => {
+            setTimeout(() => {
+              walkingInBattle = true;
+              const next = path.pop();
+              console.log("move")
+              grid[this.i][this.j].color = baseGridColor;
+              grid[this.i][this.j].type = null;
+              grid[this.i][this.j].show(this.context);
+              let hasMoved = false;
+              if (this.i !== next.i || this.j !== next.j) {
+                this.i = next.i;
+                this.j = next.j;
+                hasMoved = true;
+              }
+              this.show();
+              if (hasMoved) {
+                this.movement -= 1;
+              }
+              resolve();
+            }, 100);
+          });
         }
+        walkingInBattle = false;
+        console.log("hit")
         var gridObject = grid[this.i][this.j];
         gridObject.type = "player";
         gridObject.unit = this;
         gridObject.color = this.color;
         gridObject.show(this.context);
         this.show();
-    }
+      }
+      
     
     
 }
