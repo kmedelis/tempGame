@@ -32,9 +32,9 @@ class Player {
                     var next = path.pop();
                     grid[self.i][self.j].color = baseGridColor;
                     grid[self.i][self.j].show(self.context);
+                    client.sendPlayerMovement(next.i, next.j, player.i, player.j)
                     player.i = next.i;
                     player.j = next.j;
-                    client.sendPlayerMovement(player.i, player.j)
                     if (grid[player.i][player.j].type === "gold") {
                         player.gold++;
                         document.getElementById("goldAmount").innerHTML = player.gold;

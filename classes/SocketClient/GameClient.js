@@ -48,6 +48,12 @@ class GameClient {
       let randomInt = Math.floor(Math.random() * 29);
 
       var player = new Player(randomInt, randomInt, rectangleSize, context, this.clientId);
+      var troop1 = new Unit(5, 5, rectangleSizeBattle, battleContext, 3, "player1");
+      var troop2 = new Unit(6, 5, rectangleSizeBattle, battleContext, 4, "player1");
+
+      player1.addUnit(troop1);
+      player1.addUnit(troop2);  
+
       var map = new MainMap(player, mainGridSize, canvas, context);
 
       this.player = player;
@@ -57,8 +63,8 @@ class GameClient {
         method: "join",
         gameId: this.gameId,
         clientId: this.clientId,
-        x: player.i,
-        y: player.j,
+        i: player.i,
+        j: player.j,
       };
   
       this.ws.send(JSON.stringify(payload));
@@ -74,13 +80,15 @@ class GameClient {
       }, 1000);
     }
 
-    sendPlayerMovement(row, col) {
+    sendPlayerMovement(i, j, oldI, oldJ) {
       const payload = {
         method: 'playerMovement',
         clientId: this.clientId,
         gameId: this.gameId,
-        row: row,
-        col: col,
+        i: i,
+        j: j,
+        oldI: oldI,
+        oldJ: oldJ,
       };
       this.ws.send(JSON.stringify(payload));
     }
@@ -106,27 +114,27 @@ class GameClient {
     }
   
     handleJoin(response) {
-      this.players = response.clients;
-      showFirst(response.grid); // refactor this 
+      this.players = response.clients.map(client => new OtherPlayer(client.i, client.j, rectangleSize, context, client.clientId));
+      console.log(this.otherPlayers);
+      showFirst(response.grid); // refactor this
     
       const game = response.game;
     }
     
     handleBroadcastJoin(response) {
       const newClient = response.newClient;
-      this.players.push(newClient);
+      const newOtherPlayer = new OtherPlayer(newClient.i, newClient.j, rectangleSize, context, newClient.clientId);
+      this.players.push(newOtherPlayer);
+      console.log(this.otherPlayers);
     }
-    
 
-    handlePlayerMovement(data) {
-      const clientId = data.clientId;
-      const row = data.row;
-      const col = data.col;
-      const player = this.players.find((p) => p.clientId === clientId);
-
-      this.map.grid[row][col] = 1;
-      player1.i = row;
-      player1.j = col;
+    handlePlayerMovement(response) {
+      this.map.grid[response.oldI][response.oldJ].color = "#007500";
+      this.map.grid[response.oldI][response.oldJ].show(context);
+      const movedPlayer = this.players.find(player => player.clientId === response.movedId); // This line selects the player with movedId
+      movedPlayer.i = response.i;
+      movedPlayer.j = response.j;
+      movedPlayer.show()
     }
 
 }

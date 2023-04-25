@@ -1,24 +1,24 @@
 var htmlHelper = new HtmlHelper();
-var client = new GameClient();
+// var client = new GameClient();
+// client.createGame();
 
-// var player1 = new Player(0, 0, rectangleSize, context);
-// var player2 = new Player(1, 1, rectangleSize, context);
+var player1 = new Player(0, 0, rectangleSize, context);
+var player2 = new Player(1, 1, rectangleSize, context);
 
-// var troop1 = new Unit(5, 5, rectangleSizeBattle, battleContext, 3, "player1");
-// var troop2 = new Unit(6, 5, rectangleSizeBattle, battleContext, 4, "player1");
+var troop1 = new Unit(5, 5, rectangleSizeBattle, battleContext, 3, "player1");
+var troop2 = new Unit(6, 5, rectangleSizeBattle, battleContext, 4, "player1");
 
-// var troop3 = new Unit(5, 10, rectangleSizeBattle, battleContext, 3, "player2");
-// var troop4 = new Unit(6, 10, rectangleSizeBattle, battleContext, 3, "player2");
+var troop3 = new Unit(5, 10, rectangleSizeBattle, battleContext, 3, "player2");
+var troop4 = new Unit(6, 10, rectangleSizeBattle, battleContext, 3, "player2");
 
 
-// player1.addUnit(troop1);
-// player1.addUnit(troop2);
+player1.addUnit(troop1);
+player1.addUnit(troop2);
 
-// player2.addUnit(troop3);
-// player2.addUnit(troop4);
+player2.addUnit(troop3);
+player2.addUnit(troop4);
 
-// var battleMap = new BattleMap(player1, player2, battleGridSize, canvasBattle, battleContext);
-client.createGame();
+var battleMap = new BattleMap(player1, player2, battleGridSize, canvasBattle, battleContext);
 
 function hideBoth() {
     playerInfoDiv.hidden = true;
@@ -71,7 +71,7 @@ function initializeFirstTurn() {
 
 }
 
-hideBoth();
+showSecond();
 
 canvas.addEventListener("click", (event) => {
     if (inBattle) { 
