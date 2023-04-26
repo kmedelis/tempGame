@@ -37,6 +37,8 @@ class GameClient {
           this.handlePlayerMovement(response);
         } else if (response.method === "broadcastJoin") {
           this.handleBroadcastJoin(response);
+        } else if (response.method === "getGrid") {
+          this.handleGetGrid(response);
         }
       };
     }
@@ -93,6 +95,14 @@ class GameClient {
       this.ws.send(JSON.stringify(payload));
     }
 
+    getGrid() {
+      const payload = {
+        method: 'getGrid',
+        gameId: this.gameId,
+      };
+      this.ws.send(JSON.stringify(payload));
+    }
+
   
     handleConnect(response) {
       this.clientId = response.clientId;
@@ -115,7 +125,6 @@ class GameClient {
   
     handleJoin(response) {
       this.players = response.clients.map(client => new OtherPlayer(client.i, client.j, rectangleSize, context, client.clientId));
-      console.log(this.otherPlayers);
       showFirst(response.grid); // refactor this
     
       const game = response.game;
@@ -125,7 +134,6 @@ class GameClient {
       const newClient = response.newClient;
       const newOtherPlayer = new OtherPlayer(newClient.i, newClient.j, rectangleSize, context, newClient.clientId);
       this.players.push(newOtherPlayer);
-      console.log(this.otherPlayers);
     }
 
     handlePlayerMovement(response) {
@@ -135,6 +143,18 @@ class GameClient {
       movedPlayer.i = response.i;
       movedPlayer.j = response.j;
       movedPlayer.show()
+    }
+
+    async handleGetGrid(response) {
+      const grid = response.grid;
+      await this.map.setup();
+      this.map.setGrid(grid);
+      this.map.draw();
+      playerInfoDiv.hidden = false;
+      battleInfoDiv.hidden = true;
+      userinfo.hidden = false;
+      canvas.classList.remove('hide'); 
+      canvasBattle.classList.add('hide');
     }
 
 }

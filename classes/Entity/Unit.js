@@ -39,6 +39,7 @@ class Unit {
 
     die() {
         this.image.src = "images/deadDuckMan.png";
+        console.log("Unit died")
         this.show();
     }
 
@@ -56,12 +57,10 @@ class Unit {
         grid[this.i][this.j].type = null;
         grid[this.i][this.j].unit = null;
         for (let step = path.length - 1; step >= 0; step--) {
-          console.log(step)
           await new Promise(resolve => {
             setTimeout(() => {
               walkingInBattle = true;
               const next = path.pop();
-              console.log("move")
               grid[this.i][this.j].color = baseGridColor;
               grid[this.i][this.j].type = null;
               grid[this.i][this.j].show(this.context);
@@ -80,7 +79,6 @@ class Unit {
           });
         }
         walkingInBattle = false;
-        console.log("hit")
         var gridObject = grid[this.i][this.j];
         gridObject.type = "player";
         gridObject.unit = this;

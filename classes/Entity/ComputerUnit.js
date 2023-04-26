@@ -34,14 +34,23 @@ class ComputerUnit extends Unit {
         grid[this.i][this.j].type = null;
         grid[this.i][this.j].unit = null;
         for (let i = path.length - 1; i >= 0; i--) {
-          console.log(stepsLeft)
+          const next = path.pop();
           if (stepsLeft <= 0) {
             break;
+          }
+          if (next.type === "player") {
+            var gridObject = grid[this.i][this.j];
+            walkingInBattle = false;
+            gridObject.type = "AI";
+            gridObject.unit = this;
+            gridObject.color = this.color;
+            gridObject.show(this.context);
+            this.show();
+            return true;
           }
           await new Promise(resolve => {
             setTimeout(() => {
               walkingInBattle = true;
-              const next = path.pop();
               grid[this.i][this.j].color = baseGridColor;
               grid[this.i][this.j].type = null;
               grid[this.i][this.j].show(this.context);

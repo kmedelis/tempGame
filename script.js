@@ -1,27 +1,19 @@
 var htmlHelper = new HtmlHelper();
-// var client = new GameClient();
-// client.createGame();
+var client = new GameClient();
+client.createGame();
 
 var player1 = new Player(0, 0, rectangleSize, context);
 var player2 = new Player(1, 1, rectangleSize, context);
 
 var troop1 = new Unit(5, 5, rectangleSizeBattle, battleContext, 3, "player");
-var troop2 = new Unit(6, 5, rectangleSizeBattle, battleContext, 3, "player");
 
 var troop3 = new ComputerUnit(5, 10, rectangleSizeBattle, battleContext, 2, "AI");
-var troop4 = new ComputerUnit(6, 10, rectangleSizeBattle, battleContext, 2, "AI");
 
 troop3.addPlayerUnits(troop1);
-troop3.addPlayerUnits(troop2);
-
-troop4.addPlayerUnits(troop1);
-troop4.addPlayerUnits(troop2);
 
 player1.addUnit(troop1);
-player1.addUnit(troop2);
 
 player2.addUnit(troop3);
-player2.addUnit(troop4);
 
 var battleMap = new BattleMap(player1, player2, battleGridSize, canvasBattle, battleContext);
 
@@ -140,7 +132,6 @@ canvasBattle.addEventListener("click", async (event) => {
         htmlHelper.updateHealth(enemy)
         
         battleMap.reset(row, col);
-        battleMap.resetWalkablePath();
         battleMap.getPossiblePath(currentTurn.i , currentTurn.j , currentTurn.movement);
         currentTurn.show();
 
@@ -176,15 +167,34 @@ async function doAiStuff(unit) {
     start = battleMap.grid[unit.i][unit.j];
     var shortestDistance = unit.calculateDistanceToPlayerUnits();
     battleMap.go(shortestDistance.i, shortestDistance.j);
-    await unit.walk(battleMap.grid);
-    console.log("done")
+    var isEnemyMet = await unit.walk(battleMap.grid);
+
+    if (isEnemyMet) {
+        var dead = unit.tryToKill(shortestDistance);
+        htmlHelper.updateHealth(shortestDistance)
+        if (dead)
+        {
+            const index = armyQue.findIndex((i) => {
+                return i.id === shortestDistance.id;
+                })
+            armyQue.splice(index, 1);
+        }
+    }
     battleMap.reset();
     htmlHelper.moveFirstElementToEnd(turn);
     moveTurn(unit)  
 }
 
 function moveTurn(unit) {
+    var troopsAreDead = checkIfTroopsAreDead();
+
+    if (troopsAreDead) {
+        client.getGrid()
+        return;
+    }
+
     if (unit.movement <= 0) {
+
         if (turn === armyQue.length - 1) {
             turn = 0;
             armyQue[0].setMovement();
@@ -192,11 +202,13 @@ function moveTurn(unit) {
         } else {
             turn++;
             var unit = armyQue[turn];
+
             if (unit.team == "player")
             {
                 unit.setMovement();
                 battleMap.getPossiblePath(unit.i , unit.j , unit.movement);
             }
+
             if (unit.team == "AI")
             {
                 doAiStuff(unit)
@@ -204,3 +216,26 @@ function moveTurn(unit) {
         }
     }
 }
+
+function checkIfTroopsAreDead() {
+    var aiAlive = 0;
+    var playerAlive = 0;
+
+    for (var i = 0; i < armyQue.length; i++) {
+        var unit = armyQue[i];
+
+        if (unit.team === "player") {
+            playerAlive++;
+        }
+        if (unit.team === "AI") {
+            aiAlive++;
+        }
+
+        if (aiAlive > 0 && playerAlive > 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+

@@ -37,6 +37,8 @@ class GameServer {
         this.handlePlay(result);
       } else if (result.method === "playerMovement") {
         this.handlePlayerMovement(result);
+      } else if (result.method === "getGrid") {
+        this.handleGetGrid(result, connection);
       }
     });
 
@@ -48,6 +50,18 @@ class GameServer {
     const payload = {
       method: "connect",
       clientId: clientId,
+    };
+
+    connection.send(JSON.stringify(payload));
+  }
+
+  handleGetGrid(result, connection) {
+    const gameId = result.gameId;
+    const game = this.games[gameId];
+
+    const payload = {
+      method: "getGrid",
+      grid: game.grid,
     };
 
     connection.send(JSON.stringify(payload));
