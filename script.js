@@ -194,7 +194,6 @@ function moveTurn(unit) {
     }
 
     if (unit.movement <= 0) {
-
         if (turn === armyQue.length - 1) {
             turn = 0;
             armyQue[0].setMovement();

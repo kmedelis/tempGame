@@ -103,6 +103,14 @@ class MainMap {
         return false
     }
 
+    checkIfEnemy(row, col) {
+        if (this.grid[row][col].type === "enemy") {
+            console.log("enemy")
+            return true;
+        }
+        return false
+    }
+
     go(row, col) {
         end = this.grid[row][col];
         openSet.push(start);
