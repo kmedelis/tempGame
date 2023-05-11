@@ -55,6 +55,13 @@ class BattleMap {
         return true
     }
 
+    checkIfWalkable(row, col) {
+        if (this.grid[row][col].type !== "walkable") {
+            return false;
+        }
+        return true
+    }
+
     checkIfEnemy(player, enemy) {
         if (enemy === null) {
             return false;
@@ -124,14 +131,17 @@ class BattleMap {
     }
 
     initializeTroopPositions() {
-        for (var i = 0; i < this.player1.army.length; i++) {
-            let troop = this.player1.army[i];
+        var firstArmy = this.player1.army;
+        var secondArmy = this.player2;
+
+        for (var i = 0; i < firstArmy.length; i++) {
+            let troop = firstArmy[i];
             this.grid[troop.i][troop.j].type = "player";
             this.grid[troop.i][troop.j].color = team1Color;
         }
-        for (var i = 0; i < this.player2.army.length; i++) {
-            let troop = this.player2.army[i];
-            this.grid[troop.i][troop.j].type = "player";
+        for (var i = 0; i < secondArmy.length; i++) {
+            let troop = secondArmy[i];
+            this.grid[troop.i][troop.j].type = "x";
             this.grid[troop.i][troop.j].color = team2Color;
         }
     }

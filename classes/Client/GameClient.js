@@ -7,6 +7,9 @@ class GameClient {
       this.players = [];
       this.map = null;
       this.ws = new WebSocket("ws://localhost:9090");
+      this.mainStateManager = null
+      this.battleStateManager = null
+      this.gameStateChangeManager = null
       this.btnServer = document.getElementById("btnServer");
       this.connectionOpen = false;
   
@@ -50,11 +53,9 @@ class GameClient {
       let randomInt = Math.floor(Math.random() * 29);
 
       var player = new Player(randomInt, randomInt, rectangleSize, context, this.clientId);
-      var troop1 = new Unit(5, 5, rectangleSizeBattle, battleContext, 3, "player1");
-      var troop2 = new Unit(6, 5, rectangleSizeBattle, battleContext, 4, "player1");
+      var troop1 = new Unit(5, 5, rectangleSizeBattle, battleContext, 3, "player");
+      player.addUnit(troop1);
 
-      player1.addUnit(troop1);
-      player1.addUnit(troop2);  
 
       var map = new MainMap(player, mainGridSize, canvas, context);
 
@@ -125,9 +126,8 @@ class GameClient {
   
     handleJoin(response) {
       this.players = response.clients.map(client => new OtherPlayer(client.i, client.j, rectangleSize, context, client.clientId));
-      showFirst(response.grid); // refactor this
-    
-      const game = response.game;
+      this.mainStateManager.showFirst(response.grid); 
+      // this.battleStateManager.showSecond();
     }
     
     handleBroadcastJoin(response) {
@@ -157,4 +157,15 @@ class GameClient {
       canvasBattle.classList.add('hide');
     }
 
+    setMainStateManager(mainStateManager) {
+      this.mainStateManager = mainStateManager;
+    }
+
+    setBattleStateManager(battleStateManager) {
+      this.battleStateManager = battleStateManager;
+    }
+
+    setGameStateChangeManager(gameStateChangeManager) {
+      this.gameStateChangeManager = gameStateChangeManager;
+    }
 }

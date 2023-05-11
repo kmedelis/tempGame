@@ -182,7 +182,8 @@ class GameServer {
           i: i,
           j: j,
           type: "empty",
-          color: "green"
+          color: "green",
+          enemies: [],
         };
   
         if (Math.random() < 0.2) {

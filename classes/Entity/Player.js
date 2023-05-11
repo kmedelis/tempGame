@@ -42,6 +42,11 @@ class Player {
                         grid[player.i][player.j].color = baseGridColor;
                         grid[self.i][self.j].show(self.context);
                     }
+                    if (grid[player.i][player.j].type === "enemy") {
+                        console.log("stepped on the enemy boy");
+                        console.log(grid[player.i][player.j].enemies);
+                        client.battleStateManager.setCurrentBattle(player, grid[player.i][player.j].enemies);
+                    }
                     player.show();
                     }, (path.length - i) * 100);
             })(i, this);

@@ -1,5 +1,5 @@
 class MainMap {
-    constructor(player1,  gridSize, canvas, context) {
+    constructor(player1, gridSize, canvas, context) {
         this.grid = new Array(this.gridSize);
         this.player1 = player1;
         this.gridSize = gridSize;
@@ -28,7 +28,10 @@ class MainMap {
                 this.grid[i][j].i = grid[i][j].i;
                 this.grid[i][j].j = grid[i][j].j;
                 this.grid[i][j].type = grid[i][j].type;
-                this.grid[i][j].color = grid[i][j].color;  
+                this.grid[i][j].color = grid[i][j].color;
+                if (grid[i][j].type === "enemy") {
+                    this.grid[i][j].enemies.push(new ComputerUnit(7, 7, rectangleSizeBattle, battleContext, 1, "AI"))
+                }
             }
         }
     }
