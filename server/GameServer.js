@@ -236,12 +236,6 @@ class GameServer {
     game.clients.forEach((c) => {
       this.clients[c.clientId].connection.send(JSON.stringify(payload));
     });
-  
-    // game.clients.forEach((c) => {
-    //   if (c.clientId !== senderClientId) {
-    //     this.clients[c.clientId].connection.send(JSON.stringify(payload));
-    //   }
-    // });
   }
 
 
