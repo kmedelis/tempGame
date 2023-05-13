@@ -16,8 +16,6 @@ class MainStateManager {
             const y = event.clientY - canvas.offsetTop;
             const row = Math.floor(y / rectangleSize);
             const col = Math.floor(x / rectangleSize);
-
-            console.log(row, col)
         
             var isWall = client.map.checkIfWall(row, col);
 

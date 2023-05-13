@@ -30,7 +30,8 @@ class MainMap {
                 this.grid[i][j].type = grid[i][j].type;
                 this.grid[i][j].color = grid[i][j].color;
                 if (grid[i][j].type === "enemy") {
-                    this.grid[i][j].enemies.push(new ComputerUnit(7, 7, rectangleSizeBattle, battleContext, 1, "AI"))
+                    var enemy = grid[i][j].enemies[0];
+                    this.grid[i][j].enemies.push(new ComputerUnit(enemy.iCoordinateInBattle, enemy.jCoordinateInBattle, rectangleSizeBattle, battleContext, enemy.speed, "AI", enemy.health))
                 }
             }
         }
@@ -100,7 +101,6 @@ class MainMap {
 
     checkIfWall(row, col) {
         if (this.grid[row][col].type === "wall") {
-            console.log("can't go there")
             return true;
         }
         return false
@@ -108,7 +108,6 @@ class MainMap {
 
     checkIfEnemy(row, col) {
         if (this.grid[row][col].type === "enemy") {
-            console.log("enemy")
             return true;
         }
         return false

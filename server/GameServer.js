@@ -39,6 +39,8 @@ class GameServer {
         this.handlePlayerMovement(result);
       } else if (result.method === "getGrid") {
         this.handleGetGrid(result, connection);
+      } else if (result.method === "updateTileInformation") {
+        this.handleUpdateTileInformation(result);
       }
     });
 
@@ -131,7 +133,6 @@ class GameServer {
   
     game.clients.forEach((c) => {
       if (c.clientId !== senderClientId) {
-        console.log(payload);
         this.clients[c.clientId].connection.send(JSON.stringify(payload));
       }
     });
@@ -181,7 +182,7 @@ class GameServer {
         let cell = {
           i: i,
           j: j,
-          type: "empty",
+          type: null,
           color: "green",
           enemies: [],
         };
@@ -193,6 +194,14 @@ class GameServer {
         } else if (Math.random() < 0.1) {
           cell.type = "enemy";
           cell.color = "red";
+          var enemy = {
+            iCoordinateInBattle: 7,
+            jCoordinateInBattle: 7,
+            speed: 1,
+            health: 2,
+          }
+          cell.enemies.push(enemy)
+          console.log(cell.enemies)
         }
   
         grid[i][j] = cell;
@@ -201,6 +210,40 @@ class GameServer {
   
     return grid;
   }
+
+  handleUpdateTileInformation(result) {
+    const gameId = result.gameId;
+    const game = this.games[gameId];
+
+    var grid = game.grid
+
+    grid[result.i][result.j].type = result.type
+    grid[result.i][result.j].color = result.color
+    grid[result.i][result.j].enemies = result.enemies
+
+    const senderClientId = result.clientId;
+
+    const payload = {
+      movedId: senderClientId,
+      method: "updateTileInformation",
+      i: result.i,
+      j: result.j,
+      type: result.type,
+      color: result.color,
+      enemies: result.enemies
+    };
+
+    game.clients.forEach((c) => {
+      this.clients[c.clientId].connection.send(JSON.stringify(payload));
+    });
+  
+    // game.clients.forEach((c) => {
+    //   if (c.clientId !== senderClientId) {
+    //     this.clients[c.clientId].connection.send(JSON.stringify(payload));
+    //   }
+    // });
+  }
+
 
   handlePlay(result) {
     const gameId = result.gameId;

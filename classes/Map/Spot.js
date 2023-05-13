@@ -23,35 +23,16 @@ class Spot {
     }
 
     show(ctx) {
-        if (this.type === "player") {
-            ctx.fillStyle = this.color;
-            ctx.fillRect(this.j * this.rectangleSize, this.i * this.rectangleSize, this.rectangleSize, this.rectangleSize);
-            ctx.strokeStyle = 'black';
-            ctx.strokeRect(this.j * this.rectangleSize, this.i * this.rectangleSize, this.rectangleSize, this.rectangleSize);
-            this.unit.show()
-            return;
-        }
-        if (this.type === "AI") {
-            ctx.fillStyle = this.color;
-            ctx.fillRect(this.j * this.rectangleSize, this.i * this.rectangleSize, this.rectangleSize, this.rectangleSize);
-            ctx.strokeStyle = 'black';
-            ctx.strokeRect(this.j * this.rectangleSize, this.i * this.rectangleSize, this.rectangleSize, this.rectangleSize);
-            this.unit.show()
-            return;
-        }
-        if (this.type === "otherPlayer") {
-            ctx.fillStyle = this.color;
-            ctx.fillRect(this.j * this.rectangleSize, this.i * this.rectangleSize, this.rectangleSize, this.rectangleSize);
-            ctx.strokeStyle = 'black';
-            ctx.strokeRect(this.j * this.rectangleSize, this.i * this.rectangleSize, this.rectangleSize, this.rectangleSize);
-            this.unit.show()
-            return;
-        }
         ctx.fillStyle = this.color;
         ctx.fillRect(this.j * this.rectangleSize, this.i * this.rectangleSize, this.rectangleSize, this.rectangleSize);
         ctx.strokeStyle = 'black';
         ctx.strokeRect(this.j * this.rectangleSize, this.i * this.rectangleSize, this.rectangleSize, this.rectangleSize);
+        
+        if (["player", "AI", "otherPlayer"].includes(this.type)) {
+            this.unit.show();
+        }
     }
+    
 
     addNeighbors(grid) {
         const { i, j, gridSize } = this;

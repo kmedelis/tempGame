@@ -25,6 +25,7 @@ class Player {
     }
 
     walk = function (grid, client) {
+        path.pop() // removes first element because it contains the enemies of the current tile
         for (var i = path.length - 1; i >= 0; i--) {
             var self = this;
             (function(i, player) {
@@ -43,8 +44,6 @@ class Player {
                         grid[self.i][self.j].show(self.context);
                     }
                     if (grid[player.i][player.j].type === "enemy") {
-                        console.log("stepped on the enemy boy");
-                        console.log(grid[player.i][player.j].enemies);
                         client.battleStateManager.setCurrentBattle(player, grid[player.i][player.j].enemies);
                     }
                     player.show();

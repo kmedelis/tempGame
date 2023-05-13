@@ -1,5 +1,5 @@
 class Unit {
-    constructor(i, j, rectangleSize, context, speed, team) {
+    constructor(i, j, rectangleSize, context, speed, team, health) {
         this.image = new Image();
         this.image.src = "images/duckMan.png";
         this.i = i;
@@ -8,7 +8,7 @@ class Unit {
         this.context = context;
         this.speed = speed;
         this.attackDmg = 1;
-        this.health = 2;
+        this.health = health;
         this.team = team;
         this.walking = false;
         this.movement = 0;
@@ -39,7 +39,6 @@ class Unit {
 
     die() {
         this.image.src = "images/deadDuckMan.png";
-        console.log("Unit died")
         this.show();
     }
 

@@ -42,6 +42,8 @@ class GameClient {
           this.handleBroadcastJoin(response);
         } else if (response.method === "getGrid") {
           this.handleGetGrid(response);
+        } else if (response.method === "updateTileInformation") {
+          this.handleUpdateTileInformation(response);
         }
       };
     }
@@ -53,7 +55,7 @@ class GameClient {
       let randomInt = Math.floor(Math.random() * 29);
 
       var player = new Player(randomInt, randomInt, rectangleSize, context, this.clientId);
-      var troop1 = new Unit(5, 5, rectangleSizeBattle, battleContext, 3, "player");
+      var troop1 = new Unit(5, 5, rectangleSizeBattle, battleContext, 3, "player", 10);
       player.addUnit(troop1);
 
 
@@ -81,6 +83,20 @@ class GameClient {
       setTimeout(() => {
         this.ws.send(JSON.stringify(payload));
       }, 1000);
+    }
+
+    changeTile(type, color, enemies, i, j) {
+      const payload = {
+        method: 'updateTileInformation',
+        clientId: this.clientId,
+        gameId: this.gameId,
+        type: type,
+        color: color,
+        enemies: enemies,
+        i: i,
+        j: j,
+      };
+      this.ws.send(JSON.stringify(payload));
     }
 
     sendPlayerMovement(i, j, oldI, oldJ) {
@@ -127,7 +143,6 @@ class GameClient {
     handleJoin(response) {
       this.players = response.clients.map(client => new OtherPlayer(client.i, client.j, rectangleSize, context, client.clientId));
       this.mainStateManager.showFirst(response.grid); 
-      // this.battleStateManager.showSecond();
     }
     
     handleBroadcastJoin(response) {
@@ -143,6 +158,13 @@ class GameClient {
       movedPlayer.i = response.i;
       movedPlayer.j = response.j;
       movedPlayer.show()
+    }
+
+    handleUpdateTileInformation(response) {
+      this.map.grid[response.i][response.j].type = response.type;
+      this.map.grid[response.i][response.j].color = response.color;
+      this.map.grid[response.i][response.j].enemies = response.enemies;
+      this.map.grid[response.i][response.j].show(context);
     }
 
     async handleGetGrid(response) {

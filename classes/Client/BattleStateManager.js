@@ -7,7 +7,6 @@ class BattleStateManager {
     }
 
     showSecond() {
-        console.log("hide")
         this.currentBattle.setup(); 
         playerInfoDiv.hidden = true;
         battleInfoDiv.hidden = false;
@@ -18,7 +17,6 @@ class BattleStateManager {
     }
     
     initializeFirstTurn() {
-        console.log("initialize")
         armyQue = this.player1.army.concat(this.player2);
         armyQue.sort((a, b) => b.speed - a.speed);
         this.currentTurn = armyQue[0]
@@ -34,6 +32,9 @@ class BattleStateManager {
     }
     
     setCurrentBattle(player1, player2) {
+
+        client.changeTile("wall", "black", null, client.player.i, client.player.j)
+
         this.player1 = player1;
         this.player2 = player2;
         for (var i = 0; i < player2.length; i++) {
@@ -81,7 +82,6 @@ class BattleStateManager {
                 this.currentBattle.getPossiblePath(this.currentTurn.i , this.currentTurn.j , this.currentTurn.movement);
                 this.currentTurn.show();
         
-                this.moveTurn(this.currentTurn);
                 if (dead)
                 {
                     const index = armyQue.findIndex((i) => {
@@ -89,6 +89,8 @@ class BattleStateManager {
                       })
                     armyQue.splice(index, 1);
                 }
+
+                this.moveTurn(this.currentTurn);
                 return;
             }
             if (!isWalkable) {
@@ -116,7 +118,6 @@ class BattleStateManager {
     
         for (var i = 0; i < armyQue.length; i++) {
             var unit = armyQue[i];
-            console.log(unit.team)
     
             if (unit.team === "player") {
                 playerAlive++;
@@ -134,39 +135,61 @@ class BattleStateManager {
     }
     
     moveTurn(unit) {
-        var troopsAreDead = this.checkIfTroopsAreDead();
+        var troopsAreDead = this.checkIfTroopsAreDead();    
     
         if (troopsAreDead) {
-            console.log("troops are dead")
+            inBattle = false;
+            var checkIfPlayerWon = this.checkIfPlayerWon();
+
+            if (checkIfPlayerWon) {
+                var player = client.player;
+                client.changeTile("player", "green", null, player.i, player.j)
+            }
+
             client.getGrid()
+            client.player.show();
+
             return;
-        }
-    
-        if (unit.movement <= 0) {
-            if (turn === armyQue.length - 1) {
-                turn = 0;
-                armyQue[0].setMovement();
-                this.currentBattle.getPossiblePath(armyQue[0].i, armyQue[0].j, armyQue[0].movement);
-            } else {
-                turn++;
-                var unit = armyQue[turn];
-    
-                if (unit.team == "player")
-                {
-                    unit.setMovement();
-                    this.currentBattle.getPossiblePath(unit.i , unit.j , unit.movement);
-                }
-    
-                if (unit.team == "AI")
-                {
-                    this.doAiStuff(unit)
+        } else {
+            if (unit.movement <= 0) {
+                if (turn === armyQue.length - 1) {
+                    turn = 0;
+                    armyQue[0].setMovement();
+                    this.currentBattle.getPossiblePath(armyQue[0].i, armyQue[0].j, armyQue[0].movement);
+                } else {
+                    turn++;
+                    var unit = armyQue[turn];
+        
+                    if (unit.team == "player")
+                    {
+                        unit.setMovement();
+                        this.currentBattle.getPossiblePath(unit.i , unit.j , unit.movement);
+                    }
+        
+                    if (unit.team == "AI")
+                    {
+                        this.doAiStuff(unit)
+                    }
                 }
             }
         }
     }
 
+    checkIfPlayerWon() {
+        for (var i = 0; i < armyQue.length; i++) {
+            var unit = armyQue[i];
+
+            if (unit.team === "player") {
+                return true;
+            }
+            if (unit.team === "AI") {
+                return false;
+            }
+        }
+    }
+        
+
     async doAiStuff(unit) {
-        console.log(unit)
         start = this.currentBattle.grid[unit.i][unit.j];
         var shortestDistance = unit.calculateDistanceToPlayerUnits();
         this.currentBattle.go(shortestDistance.i, shortestDistance.j);

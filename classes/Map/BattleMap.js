@@ -141,7 +141,7 @@ class BattleMap {
         }
         for (var i = 0; i < secondArmy.length; i++) {
             let troop = secondArmy[i];
-            this.grid[troop.i][troop.j].type = "x";
+            this.grid[troop.i][troop.j].type = "AI";
             this.grid[troop.i][troop.j].color = team2Color;
         }
     }

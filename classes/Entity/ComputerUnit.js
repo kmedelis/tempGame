@@ -1,6 +1,6 @@
 class ComputerUnit extends Unit {
-    constructor(i, j, rectangleSize, context, speed, team) {
-        super(i, j, rectangleSize, context, speed, team);
+    constructor(i, j, rectangleSize, context, speed, team, health) {
+        super(i, j, rectangleSize, context, speed, team, health);
         
         this.playerUnits = [];
     }
